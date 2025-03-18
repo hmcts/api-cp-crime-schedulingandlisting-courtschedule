@@ -1,0 +1,129 @@
+openapi: 3.0.3
+info:
+  title: Product API with Validation Errors
+  description: API for managing product catalog (contains deliberate errors)
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+    url: https://example.com/support
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+  - url: https://staging-api.example.com/v1
+    description: Staging server
+
+tags:
+  - name: products
+    description: Everything about products
+  - name: categories
+    description: Operations about product categories
+
+paths:
+  /products:
+    get:
+      tags:
+        - products
+      summary: List all products
+      description: Returns a list of products with optional filtering
+      operationId: listProducts
+      parameters:
+        - name: category
+          in: query
+          description: Filter by category
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum number of items to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  total:
+                    type: integer
+                    format: int32
+                    description: Total number of items
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+# ERROR: Missing required components section
+components:
+  # ERROR: Schemas has incorrect format (should be 'schemas')
+  schema:
+    Product:
+      type: object
+      # ERROR: Extra property not allowed in schema
+      validation: true
+      required:
+        - id
+        - name
+        - price
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the product
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          description: Name of the product
+          example: "Smartphone XYZ"
+          maxLength: 100
+        description:
+          type: string
+          description: Detailed description of the product
+          example: "Latest smartphone with advanced features"
+        price:
+          # ERROR: Invalid type (should be number, string, integer, etc.)
+          type: money
+          format: double
+          description: Price of the product
+          example: 799.99
+          minimum: 0
+        status:
+          type: string
+          description: Product status in the catalog
+          # ERROR: Enum is not defined correctly (should be an array)
+          enum: available, low_stock, out_of_stock
+          example: "available"
+    
+    # ERROR: Missing required properties in Error schema
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Error message
+
+# ERROR: Security scheme is not properly defined
+security:
+  - bearerAuth: []
