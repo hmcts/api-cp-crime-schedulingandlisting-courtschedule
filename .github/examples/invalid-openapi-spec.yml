@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: Invalid API
+  description: This API has multiple errors for validation testing
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com/v1
+
+paths:
+  /products:
+    get:
+      summary: Get products
+      operationId: getProducts
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+    post:
+      summary: Create product
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    # ERROR: Should be "schemas" instead of "schema"
+    schema:
+      Product:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          price:
+            # ERROR: "money" is not a valid OpenAPI type
+            type: money
+          status:
+            type: string
+            # ERROR: Enum should be an array, not a comma-separated string
+            enum: available, out_of_stock, discontinued
+        required:
+          - id
+          - name
+          # ERROR: "required" must be an array of property names, not a single string
+          - "price, status"
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
+      # ERROR: Missing "required" field for mandatory properties
+
+  securitySchemes:
+    # ERROR: Referenced security scheme does not exist
+    bearerAuth:
+      type: http
+      scheme: token
+
+security:
+  - BearerAuth: []  # ERROR: Should be lowercase "bearerAuth"
