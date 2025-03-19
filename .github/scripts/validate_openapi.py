@@ -30,7 +30,7 @@ def load_spec(file_path):
     else:
         raise ValueError(f"Unsupported file extension: {file_path}")
 
-OAPI_SCHEMA_URL = "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/refs/heads/main/schemas/v3.1/schema.yaml"
+OAPI_SCHEMA_URL = os.environ.get("OAPI_SCHEMA_URL", "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/refs/heads/main/schemas/v3.1/schema.yaml")
 
 def fetch_openapi_schema():
     """Fetch and convert the official OpenAPI 3.1 schema from YAML to JSON."""

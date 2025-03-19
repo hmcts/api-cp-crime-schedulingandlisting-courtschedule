@@ -37,6 +37,8 @@ jobs:
           fi
 
       - name: Validate OpenAPI definitions
+        env:
+          OAPI_SCHEMA_URL: "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/refs/heads/main/schemas/v3.1/schema.yaml"
         run: |
           echo "Validating OpenAPI definitions..."
           

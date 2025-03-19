@@ -7,7 +7,7 @@ Crime case scheduling and listing API for Court Allocations
 
 The `.github/openapi/test` directory contains a valid and invalid OpenAPI specification to assert the `.github/workflows/validate-openapi.yml`.
 
-The workflow uses the OpenAPI Validator Action uses [openapi-schema-validator](https://github.com/python-openapi/openapi-schema-validator) to validate the OpenAPI specification.
+The `validate` action uses the OpenAPI Schema provided via the environment variable `OAPI_SCHEMA_URL` or defaults to `https://raw.githubusercontent.com/OAI/OpenAPI-Specification/refs/heads/main/schemas/v3.1/schema.yaml`
 
 ### Run validation locally
 
@@ -22,19 +22,7 @@ Run the following command to validate the OpenAPI specification:
 ```bash
 python ./.github/scripts/validate_openapi.py ./openapi
 ```
-
-### Invalid OpenAPI Specification (invalid-openapi-spec.yml)
-
-Contains several deliberate errors to test your validation action:
-* Incorrect components structure (uses schema instead of schemas)
-* An invalid property type (type: money instead of a valid type)
-* Improperly formatted enum (comma-separated instead of an array)
-* Missing required properties in schemas
-* Additional invalid properties in schemas
-* Referenced security scheme not properly defined
-
-### Valid OpenAPI Specification (test-openapi-spec.yaml)
-* Follows the OpenAPI 3.0.3 specification 
-* Includes complete definitions for a product catalog API 
-* Contains multiple endpoints, schemas, and security definitions 
-* Should pass validation without any errors
+or to test the validation script run:
+```bash
+python ./.github/scripts/validate_openapi.py ./.github/examples
+```
