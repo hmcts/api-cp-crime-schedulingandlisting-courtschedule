@@ -28,16 +28,16 @@ jobs:
           python-version: 3.12
           cache: 'pip'
           cache-dependency-path: |
-            '.github/scripts/requirements.txt'
+            ${{ github.workspace }}/.github/scripts/requirements.txt
 
       - name: Install dependencies
         run: |
           if [ "${{ steps.cache-pip.outputs.cache-hit }}" = "true" ]; then
             echo "Cache hit - verifying dependencies..."
-            pip install --root-user-action=ignore -r .github/scripts/requirements.txt --upgrade --upgrade-strategy eager
+            pip install --root-user-action=ignore -r $GITHUB_WORKSPACE/.github/scripts/requirements.txt --upgrade --upgrade-strategy eager
           else
             echo "Cache miss - installing dependencies..."
-            pip install --root-user-action=ignore -r .github/scripts/requirements.txt
+            pip install --root-user-action=ignore -r $GITHUB_WORKSPACE/.github/scripts/requirements.txt
           fi
 
       - name: Validate OpenAPI definitions
@@ -45,7 +45,7 @@ jobs:
           echo "Validating OpenAPI definitions..."
           
           # Find all OpenAPI files
-          OPENAPI_FILES=$(find openapi -name "*.yaml" -o -name "*.yml" -o -name "*.json")
+          OPENAPI_FILES=$(find $GITHUB_WORKSPACE/openapi -name "*.yaml" -o -name "*.yml" -o -name "*.json")
           
           if [ -z "$OPENAPI_FILES" ]; then
             echo "No OpenAPI files found."
@@ -53,7 +53,7 @@ jobs:
           fi
           
           # Run validation using the existing script
-          python .github/scripts/validate_openapi.py $OPENAPI_FILES
+          python $GITHUB_WORKSPACE/.github/scripts/validate_openapi.py $OPENAPI_FILES
           
           # Check for validation results
           VALIDATION_EXIT_CODE=$?
