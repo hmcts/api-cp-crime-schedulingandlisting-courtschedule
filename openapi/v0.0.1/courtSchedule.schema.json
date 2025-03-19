@@ -1,0 +1,66 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "id": "http://justice.gov.uk/courtAllocations.schema.json",
+    "title": "courtSechedule",
+    "type": "object",
+    "properties": {
+        "courtSchedule": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "hearings": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "description": "Hearing details of the case and associated details for the sitting",
+                            "properties": {
+                                "hearingId": {
+                                    "description": "Id of the hearing associated with the scheduling system",
+                                    "type": "string"
+                                },
+                                "hearingType": {
+                                    "description": "Type of hearing being presented",
+                                    "type": "string"
+                                },
+                                "hearingDescription": {
+                                    "description": "Description associated to the hearing",
+                                    "type": "string"
+                                },
+                                "listNote": {
+                                    "description": "Will always be required but can be null",
+                                    "type": "string"
+                                },
+                                "courtSittings": {
+                                    "description": "  ",
+                                    "type": "array",
+                                    "items": {
+                                        "sittingStart": {
+                                            "description": "Sitting Start Time",
+                                            "type": "string"
+                                        },
+                                        "sittingEnd": {
+                                            "description": "Sitting End Time",
+                                            "type": "string"
+                                        },
+
+                                        "judiciaryid": {
+                                            "description": "Judge ref id ",
+                                            "type": "uuid"
+                                        },
+
+                                        "courtHouse": {
+                                            "description": "Court house details ref id",
+                                            "type": "uuid"
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
