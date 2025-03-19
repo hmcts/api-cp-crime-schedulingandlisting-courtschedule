@@ -51,11 +51,15 @@ jobs:
             echo "No OpenAPI files found."
             exit 0
           fi
+          echo "Found OpenAPI files: $OPENAPI_FILES"
           
           # Run validation using the existing script
+          echo "Running OpenAPI validation script..."
           python $GITHUB_WORKSPACE/.github/scripts/validate_openapi.py $OPENAPI_FILES
+          echo "Validation script completed."
           
           # Check for validation results
+          echo "Validation exit code: $VALIDATION_EXIT_CODE"
           VALIDATION_EXIT_CODE=$?
           if [ $VALIDATION_EXIT_CODE -ne 0 ]; then
             echo "OpenAPI validation failed with $VALIDATION_EXIT_CODE errors."
