@@ -1,0 +1,33 @@
+openapi: 3.1.0
+info:
+  title: Court Schedule API
+  description: API for retrieving court hearing schedules based on case URN
+  version: 1.0.0
+servers:
+  - url: https://api.justice.gov.uk/v1
+    description: Production server
+paths:
+  /case/{case_urn}/courtschedule:
+    get:
+      summary: Retrieve court schedule for a specific case
+      description: Fetches court hearing details and sittings based on the provided case URN.
+      parameters:
+        - name: case_urn
+          in: path
+          required: true
+          description: Unique reference number for the case
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved court schedule
+          content:
+            application/json:
+              schema:
+                $ref: "http://justice.gov.uk/courtSchedule.schema.json"
+        '400':
+          description: Bad request, invalid case URN format
+        '404':
+          description: Court schedule not found for the given case URN
+        '500':
+          description: Internal server error
