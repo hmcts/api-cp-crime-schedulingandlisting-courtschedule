@@ -1,119 +1,91 @@
-#!/usr/bin/env python3
-"""
-OpenAPI Schema Validator
-
-This script validates OpenAPI/Swagger definition files against their respective
-schema specifications using the openapi-schema-validator package.
-
-Supports:
-- OpenAPI 3.0.x
-- Swagger 2.0
-
-Usage:
-    python validate_openapi.py <file_path> [<file_path> ...]
-"""
-
 import sys
 import os
 import json
 import yaml
 from openapi_schema_validator import validate
 
+def find_openapi_files(root_dir):
+    """Recursively find OpenAPI files (.yaml, .yml, .json) in the given directory."""
+    openapi_files = []
+    for root, _, files in os.walk(root_dir):
+        for file in files:
+            if file.endswith((".yaml", ".yml", ".json")):
+                openapi_files.append(os.path.join(root, file))
+    return openapi_files
+
 def load_yaml(file_path):
-    """Load and parse a YAML file"""
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         return yaml.safe_load(f)
 
 def load_json(file_path):
-    """Load and parse a JSON file"""
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         return json.load(f)
 
 def load_spec(file_path):
-    """Load an OpenAPI spec from YAML or JSON"""
-    if file_path.endswith(('.yaml', '.yml')):
+    if file_path.endswith((".yaml", ".yml")):
         return load_yaml(file_path)
-    elif file_path.endswith('.json'):
+    elif file_path.endswith(".json"):
         return load_json(file_path)
     else:
         raise ValueError(f"Unsupported file extension: {file_path}")
 
 def validate_openapi(file_path):
-    """
-    Validate an OpenAPI specification file
-
-    Args:
-        file_path: Path to the OpenAPI specification file
-
-    Returns:
-        bool: True if validation passed, False otherwise
-    """
+    """Validate an OpenAPI specification file using openapi-schema-validator"""
     try:
         spec = load_spec(file_path)
+        errors = []
 
-        # Check if it's a valid OpenAPI spec by looking for required fields
-        if not spec.get('openapi') and not spec.get('swagger'):
-            print(f"WARNING: {file_path} does not appear to be an OpenAPI specification (missing 'openapi' or 'swagger' field)")
-            return True
+        # Validate schema using openapi-schema-validator
+        try:
+            validate(instance=spec, schema=spec)
+        except Exception as e:
+            errors.append(f"Schema validation failed: {str(e)}")
 
-        # Validate the OpenAPI schema against the proper specification
-        if 'openapi' in spec:
-            from openapi_schema_validator import OAS30Validator
-            # Extract the schema objects to validate
-            if 'components' in spec and 'schemas' in spec['components']:
-                schemas = spec['components']['schemas']
-                for schema_name, schema in schemas.items():
-                    try:
-                        validator = OAS30Validator(schema)
-                        # We're just validating the schema itself, not data against the schema
-                    except Exception as e:
-                        print(f"ERROR in {file_path}, schema '{schema_name}': {str(e)}")
-                        return False
-            print(f"✓ {file_path} is valid (OpenAPI 3.0)")
-            return True
-        elif 'swagger' in spec and spec['swagger'] == '2.0':
-            from openapi_schema_validator import OAS20Validator
-            # Extract the schema objects to validate
-            if 'definitions' in spec:
-                schemas = spec['definitions']
-                for schema_name, schema in schemas.items():
-                    try:
-                        validator = OAS20Validator(schema)
-                        # We're just validating the schema itself, not data against the schema
-                    except Exception as e:
-                        print(f"ERROR in {file_path}, schema '{schema_name}': {str(e)}")
-                        return False
-            print(f"✓ {file_path} is valid (Swagger 2.0)")
-            return True
-        else:
-            print(f"WARNING: Unknown specification version in {file_path}")
-            return True
+        # Additional custom checks
+        if "security" in spec:
+            for sec in spec["security"]:
+                for sec_key in sec.keys():
+                    if "securitySchemes" not in spec.get("components", {}) or sec_key not in spec["components"].get("securitySchemes", {}):
+                        errors.append(f"Referenced security scheme '{sec_key}' is not defined.")
+
+        if errors:
+            print(f"ERROR in {file_path}:")
+            for err in errors:
+                print(f" - {err}")
+            return False
+
+        print(f"✓ {file_path} is valid (OpenAPI 3.1)")
+        return True
     except Exception as e:
         print(f"ERROR validating {file_path}: {str(e)}")
         return False
 
 def main():
-    """Main entry point for the script"""
     if len(sys.argv) < 2:
-        print("Usage: python validate_openapi.py <file_path> [<file_path> ...]")
+        print("Usage: python validate_openapi.py <root_directory>")
         sys.exit(1)
 
-    files = sys.argv[1:]
+    root_directory = sys.argv[1]
+    if not os.path.exists(root_directory):
+        print(f"Error: Directory '{root_directory}' not found.")
+        sys.exit(1)
+
+    openapi_files = find_openapi_files(root_directory)
+    if not openapi_files:
+        print(f"No OpenAPI files found in '{root_directory}'.")
+        sys.exit(0)
+
+    print(f"Found {len(openapi_files)} OpenAPI files for validation.")
     failures = 0
 
-    for file_path in files:
-        if not os.path.exists(file_path):
-            print(f"File not found: {file_path}")
-            failures += 1
-            continue
-
+    for file_path in openapi_files:
         if not validate_openapi(file_path):
             failures += 1
 
     if failures == 0:
-        print(f"All {len(files)} OpenAPI definition(s) validated successfully.")
+        print(f"All {len(openapi_files)} OpenAPI definition(s) validated successfully.")
     else:
-        print(f"Validation failed for {failures} file(s) out of {len(files)}.")
+        print(f"Validation failed for {failures} file(s) out of {len(openapi_files)}.")
 
     sys.exit(failures)
 
