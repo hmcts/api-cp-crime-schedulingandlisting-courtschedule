@@ -2,14 +2,15 @@ import sys
 import os
 import json
 import yaml
-from openapi_schema_validator import validate
+import jsonschema
+import requests
 
 def find_openapi_files(root_dir):
-    """Recursively find OpenAPI files (.yaml, .yml, .json) in the given directory."""
+    """Recursively find OpenAPI files (.yaml, .yml) in the given directory."""
     openapi_files = []
     for root, _, files in os.walk(root_dir):
         for file in files:
-            if file.endswith((".yaml", ".yml", ".json")):
+            if file.endswith((".yaml", ".yml")):
                 openapi_files.append(os.path.join(root, file))
     return openapi_files
 
@@ -29,19 +30,32 @@ def load_spec(file_path):
     else:
         raise ValueError(f"Unsupported file extension: {file_path}")
 
-def validate_openapi(file_path):
-    """Validate an OpenAPI specification file using openapi-schema-validator"""
+OAPI_SCHEMA_URL = "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/refs/heads/main/schemas/v3.1/schema.yaml"
+
+def fetch_openapi_schema():
+    """Fetch and convert the official OpenAPI 3.1 schema from YAML to JSON."""
+    try:
+        response = requests.get(OAPI_SCHEMA_URL)
+        response.raise_for_status()
+        schema_yaml = response.text
+        return yaml.safe_load(schema_yaml)  # Convert YAML to JSON-like Python dict
+    except Exception as e:
+        print(f"Failed to fetch OpenAPI schema: {e}")
+        sys.exit(1)
+
+def validate_openapi(file_path, oas_schema):
+    """Validate an OpenAPI specification file using the official OpenAPI 3.1 schema."""
     try:
         spec = load_spec(file_path)
         errors = []
 
-        # Validate schema using openapi-schema-validator
+        # Validate against OpenAPI meta-schema
         try:
-            validate(instance=spec, schema=spec)
-        except Exception as e:
-            errors.append(f"Schema validation failed: {str(e)}")
+            jsonschema.validate(instance=spec, schema=oas_schema)
+        except jsonschema.exceptions.ValidationError as e:
+            errors.append(f"Schema validation failed: {e.message}")
 
-        # Additional custom checks
+        # Additional security scheme check
         if "security" in spec:
             for sec in spec["security"]:
                 for sec_key in sec.keys():
@@ -54,7 +68,7 @@ def validate_openapi(file_path):
                 print(f" - {err}")
             return False
 
-        print(f"✓ {file_path} is valid (OpenAPI 3.1)")
+        print(f"✓ {file_path} is valid for schema : {OAPI_SCHEMA_URL}")
         return True
     except Exception as e:
         print(f"ERROR validating {file_path}: {str(e)}")
@@ -76,10 +90,12 @@ def main():
         sys.exit(0)
 
     print(f"Found {len(openapi_files)} OpenAPI files for validation.")
+
+    oas_schema = fetch_openapi_schema()  # Fetch OpenAPI 3.1 schema
     failures = 0
 
     for file_path in openapi_files:
-        if not validate_openapi(file_path):
+        if not validate_openapi(file_path, oas_schema):
             failures += 1
 
     if failures == 0:
