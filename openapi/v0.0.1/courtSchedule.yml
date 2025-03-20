@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Court Schedule API
   description: API for retrieving court hearing schedules based on case URN
-  version: 1.0.0
+  version: 0.0.1
 servers:
   - url: https://api.justice.gov.uk/v1
     description: Production server
