@@ -4,8 +4,8 @@ info:
   description: API for retrieving court hearing schedules based on case URN
   version: 0.0.1
 servers:
-  - url: https://api.justice.gov.uk/v1
-    description: Production server
+  - url: https://virtserver.swaggerhub.com/hmcts_dts/courtSchedule/0.0.1/courtschedule
+    description: Court Schedule virtual server
 paths:
   /case/{case_urn}/courtschedule:
     get:
@@ -24,7 +24,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "http://justice.gov.uk/courtSchedule.schema.json"
+                $ref: "https://raw.githubusercontent.com/hmcts/api-cp-crime-schedulingandlisting-courtschedule/master/openapi/v0.0.1/courtSchedule.schema.json"
         '400':
           description: Bad request, invalid case URN format
         '404':
