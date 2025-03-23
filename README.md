@@ -1,26 +1,7 @@
-# api-cp-crime-schedulingandlisting-courtallocations
-Crime case scheduling and listing API for Court Allocations
+# API CP Crime Scheduling and Listing Court Schedule
 
+The Court Schedule API provides a list of court schedules that are used in the Court Hearing Hearings and Schedule and Listing APIs.
 
+## License
 
-## GitHub Action OpenAPI Validator
-
-The `validate` action uses the OpenAPI Schema provided via the environment variable `OAPI_SCHEMA_URL` or defaults to `https://raw.githubusercontent.com/OAI/OpenAPI-Specification/refs/heads/main/schemas/v3.1/schema.yaml`
-
-### Run validation locally
-
-It is assumed that python is installed on your machine.
-
-Install the required dependencies by running the following command:
-```bash
-  pip install -r .github/scripts/requirements.txt
-```
-
-Run the following command to validate the OpenAPI specification:
-```bash
-python ./.github/scripts/validate_openapi.py ./openapi
-```
-or to test the validation script run:
-```bash
-python ./.github/scripts/validate_openapi.py ./.github/examples
-```
+This project is licensed under the [MIT License](LICENSE).
