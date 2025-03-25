@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "id": "http://justice.gov.uk/courtAllocations.schema.json",
+    "id": "http://justice.gov.uk/courtSchedule.schema.json",
     "title": "courtSechedule",
     "type": "object",
     "properties": {
@@ -17,19 +17,23 @@
                             "properties": {
                                 "hearingId": {
                                     "description": "Id of the hearing associated with the scheduling system",
-                                    "type": "string"
+                                    "type": "string",
+                                    "examples": ["HRG-123456"]
                                 },
                                 "hearingType": {
                                     "description": "Type of hearing being presented",
-                                    "type": "string"
+                                    "type": "string",
+                                    "examples": ["Preliminary", "Trial", "Sentencing"]
                                 },
                                 "hearingDescription": {
                                     "description": "Description associated to the hearing",
-                                    "type": "string"
+                                    "type": "string",
+                                    "examples": ["Initial appearance for case 456789", "Sentencing for theft charges"]
                                 },
                                 "listNote": {
                                     "description": "Will always be required but can be null",
-                                    "type": "string"
+                                    "type": "string",
+                                    "examples": ["Judge prefers afternoon start", "Requires interpreter"]
                                 },
                                 "courtSittings": {
                                     "description": "  ",
@@ -37,21 +41,26 @@
                                     "items": {
                                         "sittingStart": {
                                             "description": "Sitting Start Time",
-                                            "type": "string"
+                                            "type": "string",
+                                            "examples": ["2025-03-25T09:00:00Z"]
                                         },
                                         "sittingEnd": {
                                             "description": "Sitting End Time",
-                                            "type": "string"
+                                            "type": "string",
+                                                "examples": ["2025-03-25T12:00:00Z"]
                                         },
 
                                         "judiciaryid": {
                                             "description": "Judge ref id ",
-                                            "type": "uuid"
+                                            "type": "uuid",
+                                            "examples": ["123e4567-e89b-12d3-a456-426614174000"]
                                         },
 
                                         "courtHouse": {
                                             "description": "Court house details ref id",
-                                            "type": "uuid"
+                                            "type": "uuid",
+                                              "examples": ["223e4567-e89b-12d3-a456-426614174111"]
+
                                         }
 
                                     }
