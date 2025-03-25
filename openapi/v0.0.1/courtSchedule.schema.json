@@ -18,22 +18,22 @@
                                 "hearingId": {
                                     "description": "Id of the hearing associated with the scheduling system",
                                     "type": "string",
-                                    "examples": ["HRG-123456"]
+                                    "example": "HRG-123456"
                                 },
                                 "hearingType": {
                                     "description": "Type of hearing being presented",
                                     "type": "string",
-                                    "examples": ["Preliminary", "Trial", "Sentencing"]
+                                    "example": "Preliminary"
                                 },
                                 "hearingDescription": {
                                     "description": "Description associated to the hearing",
                                     "type": "string",
-                                    "examples": ["Initial appearance for case 456789", "Sentencing for theft charges"]
+                                    "example": "Initial appearance for case 456789"
                                 },
                                 "listNote": {
                                     "description": "Will always be required but can be null",
                                     "type": "string",
-                                    "examples": ["Judge prefers afternoon start", "Requires interpreter"]
+                                    "example": "Judge prefers afternoon start"
                                 },
                                 "courtSittings": {
                                     "description": "  ",
@@ -42,24 +42,24 @@
                                         "sittingStart": {
                                             "description": "Sitting Start Time",
                                             "type": "string",
-                                            "examples": ["2025-03-25T09:00:00Z"]
+                                            "example": "2025-03-25T09:00:00Z"
                                         },
                                         "sittingEnd": {
                                             "description": "Sitting End Time",
                                             "type": "string",
-                                                "examples": ["2025-03-25T12:00:00Z"]
+                                                "example": "2025-03-25T12:00:00Z"
                                         },
 
                                         "judiciaryid": {
                                             "description": "Judge ref id ",
                                             "type": "uuid",
-                                            "examples": ["123e4567-e89b-12d3-a456-426614174000"]
+                                            "example": "123e4567-e89b-12d3-a456-426614174000"
                                         },
 
                                         "courtHouse": {
                                             "description": "Court house details ref id",
                                             "type": "uuid",
-                                              "examples": ["223e4567-e89b-12d3-a456-426614174111"]
+                                              "example": "223e4567-e89b-12d3-a456-426614174111"
 
                                         }
 
