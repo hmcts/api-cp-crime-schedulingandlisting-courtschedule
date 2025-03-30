@@ -20,4 +20,6 @@ jobs:
       # Run Spectral
       - uses: stoplightio/spectral-action@latest
         with:
-          file_glob: 'openapi/**/*.(yml|yaml)'
+          file_glob: |
+            openapi/**/*.yml
+            openapi/**/*.yaml
