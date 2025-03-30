@@ -1,40 +1,43 @@
 openapi: 3.0.0
+
 servers:
-  
-  - description: SwaggerHub API Auto Mocking court-schedule_api
+  - description: APIHub API Auto Mocking court-schedule_api
     url: https://virtserver.swaggerhub.com/HMCTS-DTS/court-schedule_api/0.0.1
 
 info:
-  description: This is a simple API
+  description: The Court Schedule API provides a list of court schedules that are used in the Court Hearing Hearings and Schedule and Listing APIs.
   version: 0.0.1
-  title: api-cp-crime-schedulingandlisting-courtschedule
+  title: API CP Crime Scheduling and Listing Court Schedule
   contact:
-    email: you@your-company.com
+    email: no-reply@hmcts.net
   license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+
+tags:
+  - name: Court Schedule
+    description: Operations related to court scheduling
 
 paths:
   /case/{case_urn}/courtschedule:
     get:
-  
+      description: Returns the court schedule for a given case URN.
+      operationId: getCourtScheduleByCaseUrn
+      tags:
+        - Court Schedule
       parameters:
-      
         - in: path
           name: case_urn
           required: true
           description: Unique reference number for the case
           schema:
             type: string
-       
       responses:
         '200':
-          description: search results matching criteria
-          
+          description: Results matching the case urn search criteria
           content:
-           application/json:
+            application/json:
               schema:
                 $ref: "https://raw.githubusercontent.com/hmcts/api-cp-crime-schedulingandlisting-courtschedule/master/openapi/v0.0.1/courtSchedule.schema.json"
-      
         '400':
-          description: bad input parameter
+          description: Bad input parameter
