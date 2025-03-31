@@ -55,3 +55,6 @@ paths:
 
         '400':
           description: bad input parameter
+
+Deliberate error
+
