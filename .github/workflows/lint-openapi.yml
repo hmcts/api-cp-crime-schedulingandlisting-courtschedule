@@ -2,6 +2,9 @@ name: Linting of OpenAPI documents on Pull Requests
 
 on:
   pull_request:
+    paths:
+      - '**/*.yaml'
+      - '**/*.yml'
     branches:
       - master
   # Allows you to run this workflow manually from the Actions tab
@@ -17,7 +20,14 @@ jobs:
         with:
           fetch-depth: 1
 
-      # Run Spectral
-      - uses: stoplightio/spectral-action@latest
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          file_glob: openapi/**/*.{yml,yaml}
+          node-version: '20'
+
+      - name: Install Spectral
+        run: npm install -g @stoplight/spectral-cli
+
+      - name: Run Spectral on API specs
+        run: |
+          spectral lint "openapi/**/*.{yml,yaml}" || exit 1
