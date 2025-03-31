@@ -177,3 +177,5 @@ __pycache__/
 /poppler-utils-layer.zip
 /lambda_packages/
 /function.zip
+/package.json
+/package-lock.json

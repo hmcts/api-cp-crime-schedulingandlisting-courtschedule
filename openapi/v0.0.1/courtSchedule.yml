@@ -39,7 +39,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "https://raw.githubusercontent.com/hmcts/api-cp-crime-schedulingandlisting-courtschedule/master/openapi/v0.0.1/courtSchedule.schema.json"
+                $ref: "https://cdn.jsdelivr.net/gh/hmcts/api-cp-crime-schedulingandlisting-courtschedule@master/openapi/v0.0.1/courtSchedule.schema.json"
               example:
                 courtSchedule:
                   - hearings:
@@ -50,7 +50,7 @@ paths:
                         courtSittings:
                           - sittingStart: 2025-03-25T09:00:00Z
                             sittingEnd: 2025-03-25T12:00:00Z
-                            judiciaryid: 123e4567-e89b-12d3-a456-426614174000
+                            judiciaryId: 123e4567-e89b-12d3-a456-426614174000
                             courtHouse: 223e4567-e89b-12d3-a456-426614174111
 
         '400':
