@@ -39,7 +39,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "https://cdn.jsdelivr.net/gh/hmcts/api-cp-crime-schedulingandlisting-courtschedule@master/openapi/v0.0.1/courtSchedule.schema.json"
+                $ref: "https://cdn.jsdelivr.net/gh/hmcts/api-cp-crime-schedulingandlisting-courtschedule@master/openapi/v0.0.1/courtSchedule.200.schema.json"
               example:
                 courtSchedule:
                   - hearings:
