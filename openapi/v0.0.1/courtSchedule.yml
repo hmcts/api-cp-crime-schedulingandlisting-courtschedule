@@ -40,6 +40,8 @@ paths:
             application/json:
               schema:
                 $ref: "https://cdn.jsdelivr.net/gh/hmcts/api-cp-crime-schedulingandlisting-courtschedule@master/openapi/v0.0.1/courtSchedule.200.schema.json"
+#              example:
+#                $ref: "./examples/courtSchedule.200.example.json"
               example:
                 courtSchedule:
                   - hearings:
