@@ -25,8 +25,30 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Spectral
-        run: npm install -g @stoplight/spectral-cli
+      - name: Install dependencies
+        run: npm install -g @stoplight/spectral-cli ajv-cli jsonlint
+
+      - name: Lint JSON schema example responses
+        run: |
+          for file in openapi/**/*.example.json; do
+            echo "Linting $file"             
+            jsonlint -q $file || exit 1
+          done
+
+      - name: Validate JSON schema responses
+        run: |
+          for schema in openapi/**/*.schema.json; do
+            # Replace ".schema.json" with ".example.json" to get the data file name
+            datafile="${schema/.schema.json/.example.json}"
+      
+            if [ -f "$datafile" ]; then
+              echo "Validating $datafile against schema $schema"
+              # strict mode is off because the "example" attribute is useful for openapi specs
+              ajv --spec=draft2020 --strict=false -s "$schema" -d "$datafile" || exit 1
+            else
+              echo "⚠️ Skipping: no example file found for $schema"
+            fi
+          done
 
       - name: Run Spectral on API specs
         run: |
