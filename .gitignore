@@ -145,6 +145,13 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+# IntelliJ
+.idea/
+*.iml
+
+# Maven
+target/
+
 # Pyre type checker
 .pyre/
 

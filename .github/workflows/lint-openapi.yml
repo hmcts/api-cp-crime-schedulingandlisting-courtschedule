@@ -30,17 +30,23 @@ jobs:
 
       - name: Lint JSON schema example responses
         run: |
-          for file in openapi/**/*.example.json; do
-            echo "Linting $file"             
-            jsonlint -q $file || exit 1
-          done
+          shopt -s nullglob
+          files=(openapi/**/*.example.json)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "✅ No example JSON files to lint."
+          else
+            for file in "${files[@]}"; do
+              echo "Linting $file"
+              jsonlint -q "$file" || exit 1
+            done
+          fi
 
       - name: Validate JSON schema responses
         run: |
           for schema in openapi/**/*.schema.json; do
             # Replace ".schema.json" with ".example.json" to get the data file name
             datafile="${schema/.schema.json/.example.json}"
-      
+          
             if [ -f "$datafile" ]; then
               echo "Validating $datafile against schema $schema"
               # strict mode is off because the "example" attribute is useful for openapi specs
