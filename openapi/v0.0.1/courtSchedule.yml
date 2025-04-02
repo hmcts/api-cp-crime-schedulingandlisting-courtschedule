@@ -1,30 +1,25 @@
 openapi: 3.0.0
-
 servers:
   - description: APIHub API Auto Mocking court-schedule_api
-    url: https://virtserver.swaggerhub.com/HMCTS-DTS/court-schedule_api/0.0.1
+    url: https://virtserver.swaggerhub.com/HMCTS-DTS/api-cp-crime-schedulingandlisting-courtschedule/0.0.2
 
 info:
-  description: The Court Schedule API provides a list of court schedules that are used in the Court Hearing Hearings and Schedule and Listing APIs.
-  version: 0.0.1
-  title: API CP Crime Scheduling and Listing Court Schedule
+  description: Court schedule API
+  version: 0.0.2
+  title: API CP Refdata Court Schedule
   contact:
     email: no-reply@hmcts.net
   license:
     name: MIT
     url: 'https://opensource.org/licenses/MIT'
 
-tags:
-  - name: Court Schedule
-    description: Operations related to court scheduling
-
 paths:
   /case/{case_urn}/courtschedule:
     get:
-      description: Returns the court schedule for a given case URN.
+      description: Retrieve details of a court schedule  by case URN.
       operationId: getCourtScheduleByCaseUrn
       tags:
-        - Court Schedule
+        - court Schedule
       parameters:
         - in: path
           name: case_urn
@@ -32,16 +27,27 @@ paths:
           description: Unique reference number for the case
           schema:
             type: string
+
       responses:
         '200':
-          description:  case found for provided case urn
+          description:  case found
 
           content:
             application/json:
               schema:
-                $ref: "https://cdn.jsdelivr.net/gh/hmcts/api-cp-crime-schedulingandlisting-courtschedule@master/openapi/v0.0.1/courtSchedule.200.schema.json"
+                $ref: "https://raw.githubusercontent.com/hmcts/api-cp-crime-schedulingandlisting-courtschedule/refs/heads/master/openapi/v0.0.1/courtSchedule.200.schema.json"
               example:
-                $ref: "https://cdn.jsdelivr.net/gh/hmcts/api-cp-crime-schedulingandlisting-courtschedule@master/openapi/v0.0.1/courtSchedule.200.example.json"
+                courtSchedule:
+                  - hearings:
+                      - hearingId: HRG-123456
+                        hearingType: Trial
+                        hearingDescription: Sentencing for theft case
+                        listNote: Requires interpreter
+                        courtSittings:
+                          - sittingStart: 2025-03-25T09:00:00Z
+                            sittingEnd: 2025-03-25T12:00:00Z
+                            judiciaryid: 123e4567-e89b-12d3-a456-426614174000
+                            courtHouse: 223e4567-e89b-12d3-a456-426614174111
+
         '400':
           description: bad input parameter
-
