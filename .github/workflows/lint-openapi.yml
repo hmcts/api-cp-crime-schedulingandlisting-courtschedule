@@ -2,9 +2,6 @@ name: Linting of OpenAPI documents on Pull Requests
 
 on:
   pull_request:
-    paths:
-      - '**/*.yaml'
-      - '**/*.yml'
     branches:
       - master
   # Allows you to run this workflow manually from the Actions tab
@@ -31,7 +28,7 @@ jobs:
       - name: Lint JSON schema example responses
         run: |
           shopt -s nullglob
-          files=(openapi/**/*.example.json)
+          files=(src/main/resources/openapi/**/*.example.json)
           if [ ${#files[@]} -eq 0 ]; then
             echo "✅ No example JSON files to lint."
           else
@@ -43,7 +40,7 @@ jobs:
 
       - name: Validate JSON schema responses
         run: |
-          for schema in openapi/**/*.schema.json; do
+          for schema in src/main/resources/openapi/**/*.schema.json; do
             # Replace ".schema.json" with ".example.json" to get the data file name
             datafile="${schema/.schema.json/.example.json}"
           
@@ -58,4 +55,4 @@ jobs:
 
       - name: Run Spectral on API specs
         run: |
-          spectral lint "openapi/**/*.{yml,yaml}" || exit 1
+          spectral lint "src/main/resources/openapi/**/*.{yml,yaml}" || exit 1
