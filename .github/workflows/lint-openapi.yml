@@ -20,34 +20,35 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install -g @stoplight/spectral-cli ajv-cli jsonlint
+          node-version: '22'
 
       - name: Lint JSON schema example responses
         run: |
-          shopt -s nullglob
-          files=(src/main/resources/openapi/**/*.example.json)
-          if [ ${#files[@]} -eq 0 ]; then
+          npm install -g jsonlint
+
+          shopt -s globstar nullglob
+          files=$(find src/main/resources/openapi -name "*.schema.json")
+          if [ -z "$files" ]; then
             echo "✅ No example JSON files to lint."
           else
-            for file in "${files[@]}"; do
+            for file in $files; do
               echo "Linting $file"
               jsonlint -q "$file" || exit 1
             done
-          fi
+          fi        
 
       - name: Validate JSON schema responses
         run: |
-          for schema in src/main/resources/openapi/**/*.schema.json; do
-            # Replace ".schema.json" with ".example.json" to get the data file name
-            datafile="${schema/.schema.json/.example.json}"
+          npm install ajv ajv-formats ajv-keywords
+
+          for schema in src/main/resources/openapi/*.schema.json; do
+            # Replace ".schema.json" with ".schema.example.json" to get the data file name
+            datafile="${schema/.schema.json/.schema.example.json}"
           
             if [ -f "$datafile" ]; then
               echo "Validating $datafile against schema $schema"
               # strict mode is off because the "example" attribute is useful for openapi specs
-              ajv --spec=draft2020 --strict=false -s "$schema" -d "$datafile" || exit 1
+              node scripts/ajv-validate.js "$schema" "$datafile" || exit 1
             else
               echo "⚠️ Skipping: no example file found for $schema"
             fi
@@ -55,4 +56,6 @@ jobs:
 
       - name: Run Spectral on API specs
         run: |
-          spectral lint "src/main/resources/openapi/**/*.{yml,yaml}" || exit 1
+          npm install -g @stoplight/spectral-cli
+
+          spectral lint "src/main/resources/openapi/*.{yml,yaml}" || exit 1

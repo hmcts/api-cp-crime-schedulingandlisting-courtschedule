@@ -18,6 +18,9 @@ bin/main/application.yaml
 *.iws
 *.iml
 *.ipr
+node_modules
+package.json
+package-lock.json
 
 .DS_Store
 
