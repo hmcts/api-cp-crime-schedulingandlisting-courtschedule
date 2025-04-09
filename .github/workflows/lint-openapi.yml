@@ -24,8 +24,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm uninstall ajv-cli -g
-          npm install @stoplight/spectral-cli ajv@latest ajv-keywords@latest jsonlint ajv-formats
+          npm uninstall -g ajv-cli
+          npm install -g @stoplight/spectral-cli ajv@latest ajv-keywords@latest jsonlint ajv-formats
 
       - name: Lint JSON schema example responses
         run: |
