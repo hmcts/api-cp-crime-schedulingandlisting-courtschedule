@@ -24,10 +24,9 @@ jobs:
 
       - name: Lint JSON schema example responses
         run: |
-          shopt -s globstar nullglob
-
           npm install jsonlint
 
+          shopt -s globstar nullglob
           files=$(find src/main/resources/openapi -name "*.schema.json")
           if [ -z "$files" ]; then
             echo "✅ No example JSON files to lint."
