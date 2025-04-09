@@ -27,22 +27,22 @@ jobs:
 
       - name: Lint JSON schema example responses
         run: |
-          shopt -s nullglob
+          shopt -s globstar nullglob
           files=(src/main/resources/openapi/**/*.example.json)
           if [ ${#files[@]} -eq 0 ]; then
             echo "✅ No example JSON files to lint."
           else
-            for file in "${files[@]}"; do
+            for file in $files; do
               echo "Linting $file"
               jsonlint -q "$file" || exit 1
             done
-          fi
+          fi        
 
       - name: Validate JSON schema responses
         run: |
-          for schema in src/main/resources/openapi/**/*.schema.json; do
+          for schema in src/main/resources/openapi/*.schema.json; do
             # Replace ".schema.json" with ".example.json" to get the data file name
-            datafile="${schema/.schema.json/.example.json}"
+            datafile="${schema/.schema.json/.schema.example.json}"
           
             if [ -f "$datafile" ]; then
               echo "Validating $datafile against schema $schema"
@@ -55,4 +55,4 @@ jobs:
 
       - name: Run Spectral on API specs
         run: |
-          spectral lint "src/main/resources/openapi/**/*.{yml,yaml}" || exit 1
+          spectral lint "src/main/resources/openapi/*.{yml,yaml}" || exit 1
