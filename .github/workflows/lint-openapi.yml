@@ -23,7 +23,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install -g @stoplight/spectral-cli ajv-cli jsonlint
+        run: npm install -g @stoplight/spectral-cli ajv-cli jsonlint ajv-formats
 
       - name: Lint JSON schema example responses
         run: |
@@ -47,7 +47,7 @@ jobs:
             if [ -f "$datafile" ]; then
               echo "Validating $datafile against schema $schema"
               # strict mode is off because the "example" attribute is useful for openapi specs
-              ajv --spec=draft2020 --strict=false -s "$schema" -d "$datafile" || exit 1
+              node scripts/ajv-validate.js "$schema" "$datafile" || exit 1
             else
               echo "⚠️ Skipping: no example file found for $schema"
             fi
