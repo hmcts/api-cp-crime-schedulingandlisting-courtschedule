@@ -1,7 +1,7 @@
 // custom JSON schema validator
 const fs = require("fs");
 const path = require("path");
-const Ajv = require("ajv");
+const Ajv = require("ajv/dist/2020").default;
 const addFormats = require("ajv-formats");
 
 const schemaPath = process.argv[2];
