@@ -44,25 +44,21 @@
                       "sittingStart": {
                         "description": "Sitting Start Time",
                         "type": "string",
-                        "format": "date-time",
                         "example": "2025-03-25T09:00:00Z"
                       },
                       "sittingEnd": {
                         "description": "Sitting End Time",
                         "type": "string",
-                        "format": "date-time",
                         "example": "2025-03-25T12:00:00Z"
                       },
                       "judiciaryId": {
                         "description": "Judge ref id",
                         "type": "string",
-                        "format": "uuid",
                         "example": "123e4567-e89b-12d3-a456-426614174000"
                       },
                       "courtHouse": {
                         "description": "Court house details ref id",
                         "type": "string",
-                        "format": "uuid",
                         "example": "223e4567-e89b-12d3-a456-426614174111"
                       }
                     }
