@@ -23,7 +23,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install @stoplight/spectral-cli ajv jsonlint ajv-formats
+        run: npm install -g @stoplight/spectral-cli ajv jsonlint ajv-formats
 
       - name: Lint JSON schema example responses
         run: |
