@@ -22,14 +22,12 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: |
-          npm uninstall -g ajv-cli
-          npm install -g @stoplight/spectral-cli jsonlint
-
       - name: Lint JSON schema example responses
         run: |
           shopt -s globstar nullglob
+
+          npm install jsonlint
+
           files=$(find src/main/resources/openapi -name "*.schema.json")
           if [ -z "$files" ]; then
             echo "✅ No example JSON files to lint."
@@ -42,10 +40,10 @@ jobs:
 
       - name: Validate JSON schema responses
         run: |
-          npm install ajv ajv-keywords ajv-formats
+          npm install ajv ajv-formats ajv-keywords
 
           for schema in src/main/resources/openapi/*.schema.json; do
-            # Replace ".schema.json" with ".example.json" to get the data file name
+            # Replace ".schema.json" with ".schema.example.json" to get the data file name
             datafile="${schema/.schema.json/.schema.example.json}"
           
             if [ -f "$datafile" ]; then
@@ -59,4 +57,6 @@ jobs:
 
       - name: Run Spectral on API specs
         run: |
+          npm install @stoplight/spectral-cli
+
           spectral lint "src/main/resources/openapi/*.{yml,yaml}" || exit 1
