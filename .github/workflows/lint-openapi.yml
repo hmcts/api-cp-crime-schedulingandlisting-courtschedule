@@ -47,6 +47,8 @@ jobs:
             exit 1
           fi
 
+          npm install ajv@latest ajv-keywords@latest jsonlint ajv-formats
+
           for schema in src/main/resources/openapi/*.schema.json; do
             # Replace ".schema.json" with ".example.json" to get the data file name
             datafile="${schema/.schema.json/.schema.example.json}"
