@@ -23,7 +23,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install -g @stoplight/spectral-cli ajv@8 jsonlint ajv-formats
+        run: npm install -g @stoplight/spectral-cli ajv ajv-cli jsonlint ajv-formats
 
       - name: Lint JSON schema example responses
         run: |
@@ -40,6 +40,11 @@ jobs:
 
       - name: Validate JSON schema responses
         run: |
+          if [ ! -f scripts/ajv-validate.js ]; then
+            echo "❌ scripts/ajv-validate.js not found!"
+            exit 1
+          fi
+
           for schema in src/main/resources/openapi/*.schema.json; do
             # Replace ".schema.json" with ".example.json" to get the data file name
             datafile="${schema/.schema.json/.schema.example.json}"
