@@ -24,7 +24,7 @@ jobs:
 
       - name: Lint JSON schema example responses
         run: |
-          npm install -g jsonlint
+          npm install -g jsonlint-cli
 
           shopt -s globstar nullglob
           files=$(find src/main/resources/openapi -name "*.schema.json")
@@ -56,6 +56,6 @@ jobs:
 
       - name: Run Spectral on API specs
         run: |
-          npm install @stoplight/spectral-cli
+          npm install -g @stoplight/spectral-cli
 
           spectral lint "src/main/resources/openapi/*.{yml,yaml}" || exit 1
