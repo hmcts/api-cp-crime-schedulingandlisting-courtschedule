@@ -27,7 +27,7 @@ jobs:
           npm install -g jsonlint
 
           shopt -s globstar nullglob
-          files=$(find src/main/resources/openapi -name "*.schema.json")
+          files=$(find src/main/resources/openapi/schema -name "*.json" ! -name "*.example.json")
           if [ -z "$files" ]; then
             echo "✅ No example JSON files to lint."
           else
@@ -35,22 +35,24 @@ jobs:
               echo "Linting $file"
               jsonlint -q "$file" || exit 1
             done
-          fi        
+          fi
 
       - name: Validate JSON schema responses
         run: |
           npm install ajv ajv-formats ajv-keywords
 
-          for schema in src/main/resources/openapi/*.schema.json; do
+          for schemafile in $(find src/main/resources/openapi -name "*.json" ! -name "*.example.json"); do
+            echo "schemafile=$schemafile"
             # Replace ".schema.json" with ".schema.example.json" to get the data file name
-            datafile="${schema/.schema.json/.schema.example.json}"
-          
+            datafile="${schemafile/.json/.example.json}"
+            echo "datafile=$datafile"
+
             if [ -f "$datafile" ]; then
-              echo "Validating $datafile against schema $schema"
+              echo "Validating $datafile against schema $schemafile"
               # strict mode is off because the "example" attribute is useful for openapi specs
-              node scripts/ajv-validate.js "$schema" "$datafile" || exit 1
+              node scripts/ajv-validate.js "$schemafile" "$datafile" || exit 1
             else
-              echo "⚠️ Skipping: no example file found for $schema"
+              echo "⚠️ Skipping: no example file found for $schemafile"
             fi
           done
 
