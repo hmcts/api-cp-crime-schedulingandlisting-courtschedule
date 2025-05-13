@@ -1,0 +1,157 @@
+name: CI Build and Publish Increments Draft
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+  push:
+    branches:
+      - master
+      - main
+
+env:
+  FILE_PATH_OPENAPI: "src/main/resources/openapi"
+
+jobs:
+  Artefact-Version:
+    runs-on: ubuntu-latest
+    outputs:
+      draft_version: ${{ steps.vars.outputs.draft_version }}
+      latest_tag: ${{ steps.vars.outputs.latest_tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      #      - name: Show Git tags and commit context (diagnostic/debug)
+      #        run: git tag --list && git log --oneline --decorate
+
+      - name: Get short SHA for versioning
+        id: vars
+        run: |
+          if LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null); then
+            :
+          else
+            LATEST_TAG="v0.0.0"
+          fi
+          echo "🏷️ Latest Git tag resolved to: $LATEST_TAG"
+          LATEST_TAG="${LATEST_TAG#v}"
+          
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          DRAFT_VERSION="${LATEST_TAG}-${SHORT_SHA}"
+
+          echo "draft_version=$DRAFT_VERSION"
+          echo "draft_version=$DRAFT_VERSION" >> $GITHUB_OUTPUT
+
+  Update-Spec-Version:
+    needs: [Artefact-Version]
+    runs-on: ubuntu-latest
+    outputs:
+      openapi_file: ${{ steps.find_spec.outputs.openapi_file }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Find OpenAPI file
+        id: find_spec
+        run: |
+          FILE=$(find "${FILE_PATH_OPENAPI}" -name "*.openapi.yml" | head -n 1)
+          if [ -z "$FILE" ]; then
+            echo "⚠️ *** No OpenAPI spec (*.openapi.yml) found. Skipping publishing draft. ***"
+            exit 1
+          fi
+          echo "openapi_file=$FILE" >> $GITHUB_OUTPUT
+
+      - name: Update info.version in OpenAPI spec using yq
+        env:
+          API_NAME: ${{ github.event.repository.name }}
+          API_VERSION: ${{ needs.Artefact-Version.outputs.draft_version }}
+        uses: mikefarah/yq@v4.45.4
+        with:
+          cmd: |
+            yq '
+              .info.version = strenv(API_VERSION) |
+              .servers[0].url = "https://virtserver.swaggerhub.com/HMCTS-DTS/" + strenv(API_NAME) + "/" + strenv(API_VERSION)
+            ' "${{ steps.find_spec.outputs.openapi_file }}" > openapi-versioned.yml
+
+      - name: Replace original OpenAPI file
+        run: mv openapi-versioned.yml "${{ steps.find_spec.outputs.openapi_file }}"
+
+      - name: Upload updated OpenAPI file
+        uses: actions/upload-artifact@v4
+        with:
+          name: updated-openapi-spec
+          path: ${{ steps.find_spec.outputs.openapi_file }}
+
+  Build:
+    needs: [Artefact-Version, Update-Spec-Version]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: current
+
+      - name: Download updated OpenAPI file
+        uses: actions/download-artifact@v4
+        with:
+          name: updated-openapi-spec
+          path: ${{ env.FILE_PATH_OPENAPI }}
+
+      #      - name: Set Sonar Project Key and Name
+      #        id: sonar_vars
+      #        run: |
+      #          repo_sanitized="${GITHUB_REPOSITORY//\//_}"
+      #          echo "project_key=$repo_sanitized" >> $GITHUB_OUTPUT
+      #          echo "project_name=$repo_sanitized" >> $GITHUB_OUTPUT
+      #
+      #      - name: Analyze with SonarCloud
+      #        uses: SonarSource/sonarqube-scan-action@v5.1.0
+      #        with:
+      #          args: >
+      #            -Dsonar.organization=hmcts
+      #            -Dsonar.projectKey=${{ steps.sonar_vars.outputs.project_key }}
+      #            -Dsonar.projectName=${{ steps.sonar_vars.outputs.project_name }}
+      #            -Dsonar.projectVersion=${{ needs.Artefact-Version.outputs.draft_version }}
+      #            -Dsonar.sources=src
+      #            -Dsonar.java.binaries=build/classes
+      #        env:
+      #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Gradle Build and Publish on Push [Merge]
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${{ needs.Artefact-Version.outputs.draft_version }}
+
+          gradle build \
+            -DAPI_SPEC_VERSION=$VERSION \
+            -DGITHUB_REPOSITORY=${{ github.repository }} \
+            -DGITHUB_ACTOR=${{ github.actor }} \
+            -DGITHUB_TOKEN=$GITHUB_TOKEN
+
+          if [ "${{ github.event_name }}" == "push" ]; then
+            echo "Push event trigger - Publishing artefact"
+            gradle publish \
+              -DAPI_SPEC_VERSION=$VERSION \
+              -DGITHUB_REPOSITORY=${{ github.repository }} \
+              -DGITHUB_ACTOR=${{ github.actor }} \
+              -DGITHUB_TOKEN=$GITHUB_TOKEN
+          else
+            echo "Skipping publish because this is a pull_request"
+          fi

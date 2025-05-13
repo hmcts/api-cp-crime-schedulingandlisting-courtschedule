@@ -1,12 +1,12 @@
 openapi: 3.0.0
 servers:
-  - description: APIHub API Auto Mocking court-schedule_api
-    url: https://virtserver.swaggerhub.com/HMCTS-DTS/api-cp-crime-schedulingandlisting-courtschedule/0.0.2
+  - description: APIHub API Auto Mocking Scheduling and Listing court-schedule
+    url: https://virtserver.swaggerhub.com/HMCTS-DTS/api-cp-crime-schedulingandlisting-courtschedule/0.0.0
 
 info:
-  description: Court schedule API
-  version: 0.0.2
-  title: API CP Refdata Court Schedule
+  description: Scheduling and Listing API providing the court schedule
+  version: 0.0.0
+  title: Scheduling and Listing Court Schedule API
   contact:
     email: no-reply@hmcts.net
   license:
@@ -16,7 +16,7 @@ info:
 paths:
   /case/{case_urn}/courtschedule:
     get:
-      description: Retrieve details of a court schedule  by case URN.
+      description: Retrieve details of a court schedule by case URN.
       operationId: getCourtScheduleByCaseUrn
       tags:
         - court Schedule

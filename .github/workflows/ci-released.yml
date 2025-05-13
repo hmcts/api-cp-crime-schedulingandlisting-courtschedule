@@ -1,0 +1,99 @@
+name: CI Gradle
+
+on:
+  release:
+    types: [published]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  FILE_PATH_OPENAPI: "src/main/resources/openapi"
+
+jobs:
+  Artefact-Version:
+    runs-on: ubuntu-latest
+    outputs:
+      RELEASED_VERSION: ${{ steps.vars.outputs.RELEASED_VERSION }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: vars
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG_NAME#v}"
+          echo "RELEASED_VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+  Update-Spec-Version:
+    needs: [ Artefact-Version ]
+    runs-on: ubuntu-latest
+    outputs:
+      openapi_file: ${{ steps.find_spec.outputs.openapi_file }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Find OpenAPI file
+        id: find_spec
+        run: |
+          FILE=$(find ${FILE_PATH_OPENAPI} -name "*.openapi.yml" | head -n 1)
+          echo "openapi_file=$FILE" >> $GITHUB_OUTPUT
+
+      - name: Update info.version in OpenAPI spec using yq
+        env:
+          API_NAME: ${{ github.event.repository.name }}
+          API_VERSION: ${{ needs.Artefact-Version.outputs.RELEASED_VERSION }}
+        uses: mikefarah/yq@v4.45.4
+        with:
+          cmd: |
+            yq '
+              .info.version = strenv(API_VERSION) |
+              .servers[0].url = "https://virtserver.swaggerhub.com/HMCTS-DTS/" + strenv(API_NAME) + "/" + strenv(API_VERSION)
+            ' "${{ steps.find_spec.outputs.openapi_file }}" > openapi-versioned.yml
+
+      - name: Replace original OpenAPI file
+        run: mv openapi-versioned.yml "${{ steps.find_spec.outputs.openapi_file }}"
+
+      - name: Upload updated OpenAPI file
+        uses: actions/upload-artifact@v4
+        with:
+          name: updated-openapi-spec
+          path: ${{ steps.find_spec.outputs.openapi_file }}
+
+  Build:
+    needs: [Artefact-Version, Update-Spec-Version]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: current
+
+      - name: Download updated OpenAPI file
+        uses: actions/download-artifact@v4
+        with:
+          name: updated-openapi-spec
+          path: ${{ env.FILE_PATH_OPENAPI }}
+
+      - name: Gradle Build and Publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${{ needs.Artefact-Version.outputs.RELEASED_VERSION }}
+
+          gradle build publish \
+            -DAPI_SPEC_VERSION=$VERSION \
+            -DGITHUB_REPOSITORY=${{ github.repository }} \
+            -DGITHUB_ACTOR=${{ github.actor }} \
+            -DGITHUB_TOKEN=$GITHUB_TOKEN
