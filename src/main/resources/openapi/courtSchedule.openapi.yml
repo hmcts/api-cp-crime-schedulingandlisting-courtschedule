@@ -31,23 +31,68 @@ paths:
       responses:
         '200':
           description:  case found
-
           content:
             application/json:
               schema:
-                $ref: "courtSchedule.schema.json"
-              example:
-                courtSchedule:
-                  - hearings:
-                      - hearingId: HRG-123456
-                        hearingType: Trial
-                        hearingDescription: Sentencing for theft case
-                        listNote: Requires interpreter
-                        courtSittings:
-                          - sittingStart: 2025-03-25T09:00:00Z
-                            sittingEnd: 2025-03-25T12:00:00Z
-                            judiciaryid: 123e4567-e89b-12d3-a456-426614174000
-                            courtHouse: 223e4567-e89b-12d3-a456-426614174111
-
+                $ref: "#/components/schemas/CourtScheduleResponse"
         '400':
           description: bad input parameter
+
+components:
+  schemas:
+    CourtScheduleResponse:
+      type: object
+      properties:
+        courtSchedule:
+          type: array
+          items:
+            type: object
+            properties:
+              hearings:
+                type: array
+                items:
+                  type: object
+                  description: Hearing details of the case and associated details for the sitting
+                  properties:
+                    hearingId:
+                      description: Id of the hearing associated with the scheduling system
+                      type: string
+                      example: "HRG-123456"
+                    hearingType:
+                      description: Type of hearing being presented
+                      type: string
+                      example: "Preliminary"
+                    hearingDescription:
+                      description: Description associated to the hearing
+                      type: string
+                      example: "Initial appearance for case 456789"
+                    listNote:
+                      description: Will always be required but can be null
+                      type: string
+                      example: "Judge prefers afternoon start"
+                    courtSittings:
+                      description: Details of court sittings
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          sittingStart:
+                            description: Sitting Start Time
+                            type: string
+                            format: date-time
+                            example: "2025-03-25T09:00:00Z"
+                          sittingEnd:
+                            description: Sitting End Time
+                            type: string
+                            format: date-time
+                            example: "2025-03-25T12:00:00Z"
+                          judiciaryId:
+                            description: Judge ref id
+                            type: string
+                            pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+                            example: "123e4567-e89b-12d3-a456-426614174000"
+                          courtHouse:
+                            description: Court house details ref id
+                            type: string
+                            pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+                            example: "223e4567-e89b-12d3-a456-426614174111"
