@@ -38,7 +38,7 @@ class OpenAPIConfigurationLoaderTest {
         assertEquals("https://opensource.org/licenses/MIT", license.getUrl());
 
         assertNotNull(info.getContact());
-        assertEquals("no-reply@hmcts.net", info.getContact().getEmail());
+        assertEquals("no-reply@hmcts.com", info.getContact().getEmail());
 
         assertNotNull(openAPI.getServers());
         assertFalse(openAPI.getServers().isEmpty());
