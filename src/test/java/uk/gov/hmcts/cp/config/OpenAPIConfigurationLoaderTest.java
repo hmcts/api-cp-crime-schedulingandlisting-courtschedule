@@ -23,7 +23,7 @@ class OpenAPIConfigurationLoaderTest {
 
         Info info = openAPI.getInfo();
         assertNotNull(info);
-        assertEquals("Scheduling and Listing Court Schedule API", info.getTitle());
+        assertEquals("Common Platform API Scheduling and Listing Court Schedule", info.getTitle());
         assertEquals("Scheduling and Listing API providing the court schedule", info.getDescription());
 
         String apiGitHubRepository = "api-cp-crime-schedulingandlisting-courtschedule";
