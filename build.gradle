@@ -5,7 +5,7 @@ plugins {
   id 'jacoco'
   id 'maven-publish'
   id "com.github.ben-manes.versions" version "0.52.0"
-  id "org.cyclonedx.bom" version "2.3.0"
+  id "org.cyclonedx.bom" version "2.3.1"
 }
 
 group = 'uk.gov.hmcts.cp'
@@ -218,14 +218,14 @@ tasks.withType(Checkstyle).configureEach {
 }
 
 ext {
-  springBootVersion = "3.4.5"
+  springBootVersion = "3.5.0"
   lombokVersion = "1.18.38"
 }
 
 dependencies {
   // OpenAPI Generator runtime support
   implementation 'org.openapitools:openapi-generator-core:7.13.0'
-  implementation 'io.swagger.parser.v3:swagger-parser:2.1.27'
+  implementation 'io.swagger.parser.v3:swagger-parser:2.1.28'
   implementation 'io.swagger.core.v3:swagger-annotations:2.2.32'
   implementation 'net.logstash.logback:logstash-logback-encoder:8.1'
 
