@@ -14,14 +14,23 @@ def githubActor = project.findProperty("github.actor") ?: System.getenv("GITHUB_
 def githubToken = project.findProperty("github.token") ?: System.getenv("GITHUB_TOKEN")
 def githubRepo = System.getenv("GITHUB_REPOSITORY")
 
+def azureADOArtifactRepository = 'https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1'
+def azureADOArtifactActor = System.getenv("AZURE_DEVOPS_ARTIFACT_USERNAME")
+def azureADOArtifactToken = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
+
+
 //debugging
 //    if (githubActor != null) {
 //      println "🔐 Configuring GitHub Packages publishing to: https://maven.pkg.github.com/$githubRepo"
 //    }
 //    println "GitHub Packages publishing required environment variables:"
-//    println " - GITHUB_ACTOR=${githubActor != null ? '✔' : '❌'}"
-//    println " - GITHUB_TOKEN=${githubToken != null ? '✔' : '❌'}"
-//    println " - GITHUB_REPOSITORY=${githubRepo != null ? '✔' : '❌'}"
+//    println " - GITHUB_ACTOR=${githubActor != null ? ' ✔ FOUND' : '❌'}"
+//    println " - GITHUB_TOKEN=${githubToken != null ? ' ✔ FOUND' : '❌'}"
+//    println " - GITHUB_REPOSITORY=${githubRepo != null ? ' ✔ FOUND' : '❌'}"
+
+//    println "Azure ADO publishing required environment variables:"
+//    println " - AZURE_DEVOPS_ARTIFACT_USERNAME=${azureADOArtifactActor != null ? ' ✔ FOUND' : '❌'}"
+//    println " - AZURE_DEVOPS_ARTIFACT_TOKEN=${azureADOArtifactToken != null ? ' ✔ FOUND' : '❌'}"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_21
@@ -88,7 +97,7 @@ repositories {
   mavenLocal()
   mavenCentral()
   maven {
-    url = 'https://jitpack.io'
+    url = azureADOArtifactRepository
   }
 }
 
@@ -105,6 +114,14 @@ publishing {
       credentials {
         username = githubActor
         password = githubToken
+      }
+    }
+    maven {
+      name = "AzureArtifacts"
+      url = uri(azureADOArtifactRepository)
+      credentials {
+        username = azureADOArtifactActor
+        password = azureADOArtifactToken
       }
     }
   }
