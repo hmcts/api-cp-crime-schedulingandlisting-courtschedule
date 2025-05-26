@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 public class OpenAPIConfigurationLoader {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenAPIConfigurationLoader.class);
-    private static final String JUDGES_OPENAPI = "openapi/courtSchedule.openapi.yml";
+    private static final String CS_OPENAPI = "openapi/courtSchedule.openapi.yml";
 
     public static OpenAPI loadOpenApiFromClasspath(final String path) {
         if (StringUtils.isBlank(path)) {
@@ -36,6 +36,6 @@ public class OpenAPIConfigurationLoader {
     }
 
     public final OpenAPI openAPI() {
-        return loadOpenApiFromClasspath(JUDGES_OPENAPI);
+        return loadOpenApiFromClasspath(CS_OPENAPI);
     }
 }

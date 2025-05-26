@@ -61,10 +61,19 @@ tasks.named('test') {
   useJUnitPlatform()
   systemProperty 'API_SPEC_VERSION', System.getProperty('API_SPEC_VERSION', '0.0.0')
   failFast = true
+  // Mockito must be added as an agent to the build see:
+  // https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+//  jvmArgs += [
+//          "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-agent') }}"
+//  ]
   testLogging {
     events "passed", "skipped", "failed"
     exceptionFormat = 'full'
     showStandardStreams = true
+  }
+  reports {
+    junitXml.required.set(true) // For CI tools (e.g. Jenkins, GitHub Actions)
+    html.required.set(true)     // Human-readable browser report
   }
 }
 
@@ -192,7 +201,7 @@ openApiGenerate {
           useSpringBoot3                : "true",
           implicitHeaders               : "false",
           performBeanValidation         : "true",
-          additionalModelTypeAnnotations: "@lombok.Builder;@lombok.AllArgsConstructor;@lombok.NoArgsConstructor",
+          additionalModelTypeAnnotations: "@lombok.Builder",
           serializableModel             : "true",
           openApiNullable               : "false"
   ]

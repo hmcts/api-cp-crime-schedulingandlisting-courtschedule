@@ -30,13 +30,17 @@ paths:
 
       responses:
         '200':
-          description:  case found
+          description:  Case found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CourtScheduleResponse"
         '400':
-          description: bad input parameter
+          description: Bad input parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
 components:
   schemas:
@@ -96,3 +100,15 @@ components:
                             type: string
                             pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
                             example: "223e4567-e89b-12d3-a456-426614174111"
+    ErrorResponse:
+      type: object
+      required:
+        - errorCode
+        - message
+      properties:
+        errorCode:
+          type: string
+          example: "INVALID_CASE_URN"
+        message:
+          type: string
+          example: "The case URN provided is not valid."
