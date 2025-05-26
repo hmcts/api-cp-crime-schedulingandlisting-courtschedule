@@ -1,5 +1,7 @@
 package uk.gov.hmcts.cp.config;
 
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,5 +74,45 @@ class OpenAPIConfigurationLoaderTest {
         } catch (IllegalArgumentException e) {
             assert true;
         }
+    }
+
+    @Test
+    void openAPI_should_define_200_response_for_getCourtScheduleByCaseUrn() {
+        OpenAPIConfigurationLoader config = new OpenAPIConfigurationLoader();
+        OpenAPI openAPI = config.openAPI();
+
+        assertNotNull(openAPI.getPaths());
+        assertTrue(openAPI.getPaths().containsKey("/case/{case_urn}/courtschedule"));
+
+        ApiResponses responses = openAPI.getPaths()
+                .get("/case/{case_urn}/courtschedule")
+                .getGet()
+                .getResponses();
+
+        assertNotNull(responses);
+        ApiResponse okResponse = responses.get("200");
+        assertNotNull(okResponse, "200 response should be defined");
+        assertEquals("Case found", okResponse.getDescription());
+        assertNotNull(okResponse.getContent().get("application/json"));
+    }
+
+    @Test
+    void openAPI_should_define_400_response_for_getCourtScheduleByCaseUrn() {
+        OpenAPIConfigurationLoader config = new OpenAPIConfigurationLoader();
+        OpenAPI openAPI = config.openAPI();
+
+        assertNotNull(openAPI.getPaths());
+        assertTrue(openAPI.getPaths().containsKey("/case/{case_urn}/courtschedule"));
+
+        ApiResponses responses = openAPI.getPaths()
+                .get("/case/{case_urn}/courtschedule")
+                .getGet()
+                .getResponses();
+
+        assertNotNull(responses);
+        ApiResponse badRequest = responses.get("400");
+        assertNotNull(badRequest, "400 response should be defined");
+        assertEquals("Bad input parameter", badRequest.getDescription());
+        assertNotNull(badRequest.getContent().get("application/json"));
     }
 }
