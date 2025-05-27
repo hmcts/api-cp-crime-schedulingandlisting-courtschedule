@@ -144,7 +144,7 @@ cyclonedxBom {
   skipConfigs = ["test", "testImplementation"]
   schemaVersion = "1.6"
   componentVersion = providers.provider { project.version.toString() }
-  destination = file("$buildDir/reports")
+  destination = file("${layout.buildDirectory.get().asFile.absolutePath}/reports")
   includeBuildSystem = true
   outputName = "bom"
   outputFormat = "json"
@@ -161,7 +161,7 @@ jar {
     println "⚠️  CHANGELOG.md not found, skipping inclusion in JAR"
   }
 
-  def sbomFile = file("$buildDir/reports/bom.json")
+  def sbomFile = file("${layout.buildDirectory.get().asFile.absolutePath}/reports/bom.json")
   if (sbomFile.exists()) {
     println "✅ Including SBOM from ${sbomFile} in JAR"
     from(sbomFile) {
@@ -184,7 +184,7 @@ tasks.named("openApiGenerate") {
 openApiGenerate {
   generatorName = "spring"
   inputSpec = inputSpecFile.absolutePath
-  outputDir = "$buildDir/generated"
+  outputDir = layout.buildDirectory.dir("generated").get().asFile.absolutePath
   apiPackage = "uk.gov.hmcts.cp.openapi.api"
   modelPackage = "uk.gov.hmcts.cp.openapi.model"
   generateModelTests = true
@@ -212,7 +212,7 @@ tasks.named('compileJava') {
 }
 
 def formatterUrl = 'https://raw.githubusercontent.com/hmcts/api-cp-code-style/refs/heads/master/config/formatter/eclipse-formatter.xml'
-def formatterPath = "$buildDir/eclipse-formatter.xml"
+def formatterPath = "${layout.buildDirectory.get().asFile.absolutePath}/eclipse-formatter.xml"
 tasks.register('downloadFormatter') {
   outputs.file(formatterPath)
   doLast {
@@ -237,7 +237,7 @@ tasks.named('spotlessJava') {
 }
 
 tasks.withType(Checkstyle).configureEach {
-  def generatedDir = file("${buildDir}/generated/src/main/java").canonicalPath
+  def generatedDir = file("${layout.buildDirectory.get().asFile.absolutePath}/generated/src/main/java").canonicalPath
   source = source.filter { file ->
     !file.canonicalPath.startsWith(generatedDir)
   }
