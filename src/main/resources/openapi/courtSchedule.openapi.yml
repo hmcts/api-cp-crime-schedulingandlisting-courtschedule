@@ -102,13 +102,20 @@ components:
                             example: "223e4567-e89b-12d3-a456-426614174111"
     ErrorResponse:
       type: object
-      required:
-        - errorCode
-        - message
       properties:
-        errorCode:
+        error:
           type: string
-          example: "INVALID_CASE_URN"
+          description: Machine-readable error code
         message:
           type: string
-          example: "The case URN provided is not valid."
+          description: Human-readable error message
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error context
+        timestamp:
+          type: string
+          format: date-time
+        traceId:
+          type: string
+          description: Unique identifier for error tracing
