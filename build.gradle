@@ -201,7 +201,7 @@ openApiGenerate {
           useSpringBoot3                : "true",
           implicitHeaders               : "false",
           performBeanValidation         : "true",
-          additionalModelTypeAnnotations: "@lombok.Builder",
+          additionalModelTypeAnnotations: "@lombok.Builder;@lombok.AllArgsConstructor;@lombok.NoArgsConstructor",
           serializableModel             : "true",
           openApiNullable               : "false"
   ]
