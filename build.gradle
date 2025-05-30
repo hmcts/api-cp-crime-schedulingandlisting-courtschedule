@@ -211,7 +211,7 @@ tasks.named('compileJava') {
   dependsOn tasks.named('spotlessApply')
 }
 
-def formatterUrl = 'https://raw.githubusercontent.com/hmcts/api-cp-code-style/refs/heads/master/config/formatter/eclipse-formatter.xml'
+def formatterUrl = 'https://raw.githubusercontent.com/hmcts/api-cp-code-style/refs/heads/main/config/formatter/eclipse-formatter.xml'
 def formatterPath = "${layout.buildDirectory.get().asFile.absolutePath}/eclipse-formatter.xml"
 tasks.register('downloadFormatter') {
   outputs.file(formatterPath)
