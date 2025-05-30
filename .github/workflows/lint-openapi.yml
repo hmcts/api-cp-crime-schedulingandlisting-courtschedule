@@ -74,7 +74,7 @@ jobs:
 
       - name: Validate JSON schema responses
         run: |
-          curl -sSfL https://raw.githubusercontent.com/hmcts/api-cp-code-style/refs/heads/master/lint/scripts/ajv-validate.js -o ajv-validate.js
+          curl -sSfL https://raw.githubusercontent.com/hmcts/api-cp-code-style/refs/heads/main/lint/scripts/ajv-validate.js -o ajv-validate.js
 
           for schemaFile in $(find src/main/resources/openapi -name "*.json" ! -name "*.example.json"); do
             datafile="${schemaFile/.json/.example.json}"
