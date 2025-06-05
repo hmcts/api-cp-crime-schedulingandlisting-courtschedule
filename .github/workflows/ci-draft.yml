@@ -25,9 +25,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      #      - name: Show Git tags and commit context (diagnostic/debug)
-      #        run: git tag --list && git log --oneline --decorate
-
       - name: Get short SHA for versioning
         id: vars
         run: |
@@ -112,27 +109,6 @@ jobs:
           name: updated-openapi-spec
           path: ${{ env.FILE_PATH_OPENAPI }}
 
-      #      - name: Set Sonar Project Key and Name
-      #        id: sonar_vars
-      #        run: |
-      #          repo_sanitized="${GITHUB_REPOSITORY//\//_}"
-      #          echo "project_key=$repo_sanitized" >> $GITHUB_OUTPUT
-      #          echo "project_name=$repo_sanitized" >> $GITHUB_OUTPUT
-      #
-      #      - name: Analyze with SonarCloud
-      #        uses: SonarSource/sonarqube-scan-action@v5.1.0
-      #        with:
-      #          args: >
-      #            -Dsonar.organization=hmcts
-      #            -Dsonar.projectKey=${{ steps.sonar_vars.outputs.project_key }}
-      #            -Dsonar.projectName=${{ steps.sonar_vars.outputs.project_name }}
-      #            -Dsonar.projectVersion=${{ needs.Artefact-Version.outputs.draft_version }}
-      #            -Dsonar.sources=src
-      #            -Dsonar.java.binaries=build/classes
-      #        env:
-      #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
       - name: Gradle Build and Publish on Push [Merge]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -141,11 +117,7 @@ jobs:
         run: |
           VERSION=${{ needs.Artefact-Version.outputs.draft_version }}
 
-          gradle build \
-            -DAPI_SPEC_VERSION=$VERSION \
-            -DGITHUB_REPOSITORY=${{ github.repository }} \
-            -DGITHUB_ACTOR=${{ github.actor }} \
-            -DGITHUB_TOKEN=$GITHUB_TOKEN
+          gradle build -DAPI_SPEC_VERSION=$VERSION
 
           if [ "${{ github.event_name }}" == "push" ]; then
             echo "Push event trigger - Publishing artefact"
@@ -154,7 +126,7 @@ jobs:
               -DGITHUB_REPOSITORY=${{ github.repository }} \
               -DGITHUB_ACTOR=${{ github.actor }} \
               -DGITHUB_TOKEN=$GITHUB_TOKEN \
-              -DAZURE_DEVOPS_ARTIFACT_USERNAME=$HMCTS_ARTEFACT_ACTOR \
+              -DAZURE_DEVOPS_ARTIFACT_USERNAME=$AZURE_DEVOPS_ARTIFACT_USERNAME \
               -DAZURE_DEVOPS_ARTIFACT_TOKEN=$AZURE_DEVOPS_ARTIFACT_TOKEN
           else
             echo "Skipping publish because this is a pull_request"
