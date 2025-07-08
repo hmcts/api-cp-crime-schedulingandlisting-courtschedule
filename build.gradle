@@ -1,7 +1,7 @@
 plugins {
   id 'java'
   id 'org.openapi.generator' version '7.14.0'
-  id 'com.diffplug.spotless' version '7.0.4'
+  id 'com.diffplug.spotless' version '7.1.0'
   id 'jacoco'
   id 'maven-publish'
   id "com.github.ben-manes.versions" version "0.52.0"
@@ -261,7 +261,7 @@ dependencies {
   compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
-  testImplementation(platform('org.junit:junit-bom:5.13.2'))
+  testImplementation(platform('org.junit:junit-bom:5.13.3'))
   testImplementation 'org.junit.jupiter:junit-jupiter-api'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
