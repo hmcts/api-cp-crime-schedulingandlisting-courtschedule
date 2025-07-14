@@ -44,7 +44,7 @@ jobs:
         env:
           API_NAME: ${{ github.event.repository.name }}
           API_VERSION: ${{ needs.Artefact-Version.outputs.RELEASED_VERSION }}
-        uses: mikefarah/yq@v4.45.4
+        uses: mikefarah/yq@v4.46.1
         with:
           cmd: |
             yq '
