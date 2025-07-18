@@ -43,7 +43,7 @@ jobs:
         env:
           API_NAME: ${{ github.event.repository.name }}
           API_VERSION: ${{ needs.API-Version.outputs.released_version }}
-        uses: mikefarah/yq@v4.45.4
+        uses: mikefarah/yq@v4.46.1
         with:
           cmd: |
             yq '
