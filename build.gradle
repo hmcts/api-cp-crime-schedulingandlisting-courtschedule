@@ -1,7 +1,7 @@
 plugins {
   id 'java'
   id 'org.openapi.generator' version '7.14.0'
-  id 'com.diffplug.spotless' version '7.1.0'
+  id 'com.diffplug.spotless' version '7.2.1'
   id 'jacoco'
   id 'maven-publish'
   id "com.github.ben-manes.versions" version "0.52.0"
@@ -33,8 +33,9 @@ def azureADOArtifactToken = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
 //    println " - AZURE_DEVOPS_ARTIFACT_TOKEN=${azureADOArtifactToken != null ? ' ✔ FOUND' : '❌'}"
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_21
-  targetCompatibility = JavaVersion.VERSION_21
+  def javaVersion = JavaVersion.toVersion(System.getProperty("java.version"))
+  sourceCompatibility = javaVersion
+  targetCompatibility = javaVersion
 }
 
 sourceSets {
@@ -61,11 +62,6 @@ tasks.named('test') {
   useJUnitPlatform()
   systemProperty 'API_SPEC_VERSION', System.getProperty('API_SPEC_VERSION', '0.0.0')
   failFast = true
-  // Mockito must be added as an agent to the build see:
-  // https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
-//  jvmArgs += [
-//          "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-agent') }}"
-//  ]
   testLogging {
     events "passed", "skipped", "failed"
     exceptionFormat = 'full'
@@ -181,10 +177,14 @@ tasks.named("openApiGenerate") {
   inputs.file(inputSpecFile)
 }
 
+//The OpenAPI generator automatically generates constructors for models based on the schema.
+//Applying Lombok’s @AllArgsConstructor and @lombok.NoArgsConstructor will try to generate a constructor with the same signature.
+//The duplicate constructors are causing a compilation error.
+//If the schema becomes more complicated then add @lombok.AllArgsConstructor and @lombok.NoArgsConstructor back as it will generate other constructors which will not clash
 openApiGenerate {
   generatorName = "spring"
   inputSpec = inputSpecFile.absolutePath
-  outputDir = layout.buildDirectory.dir("generated").get().asFile.absolutePath
+  outputDir = "${layout.buildDirectory.get().asFile.absolutePath}/generated"
   apiPackage = "uk.gov.hmcts.cp.openapi.api"
   modelPackage = "uk.gov.hmcts.cp.openapi.model"
   generateModelTests = true
@@ -244,7 +244,7 @@ tasks.withType(Checkstyle).configureEach {
 }
 
 ext {
-  springBootVersion = "3.5.3"
+  springBootVersion = "3.5.4"
   lombokVersion = "1.18.38"
 }
 
@@ -255,13 +255,13 @@ dependencies {
   implementation 'io.swagger.core.v3:swagger-annotations:2.2.34'
   implementation 'net.logstash.logback:logstash-logback-encoder:8.1'
 
-  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.19.1'
+  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.19.2'
   implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
   implementation "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
   compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
-  testImplementation(platform('org.junit:junit-bom:5.13.3'))
+  testImplementation(platform('org.junit:junit-bom:5.13.4'))
   testImplementation 'org.junit.jupiter:junit-jupiter-api'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
