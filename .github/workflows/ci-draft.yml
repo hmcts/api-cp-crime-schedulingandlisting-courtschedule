@@ -35,6 +35,9 @@ jobs:
   Update-Spec-Version:
     needs: [Artefact-Version]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      attestations: write
     outputs:
       upload_artifact_name: ${{ steps.update_spec.outputs.upload_artifact_name }}
     steps:
