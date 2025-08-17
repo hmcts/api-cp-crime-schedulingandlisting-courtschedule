@@ -14,7 +14,7 @@ info:
     url: 'https://opensource.org/licenses/MIT'
 
 paths:
-  /case/{case_urn}/courtschedule/{court_room}:
+  /case/{case_urn}/courtschedule:
     get:
       description: Retrieve details of a court schedule by case URN and court room.
       operationId: getCourtScheduleByCaseUrn
@@ -25,12 +25,6 @@ paths:
           name: case_urn
           required: true
           description: Unique reference number for the case
-          schema:
-            type: string
-        - in: path
-          name: court_room
-          required: true
-          description: Identifier for the court room
           schema:
             type: string
 
