@@ -82,10 +82,10 @@ class OpenAPIConfigurationLoaderTest {
         OpenAPI openAPI = config.openAPI();
 
         assertNotNull(openAPI.getPaths());
-        assertTrue(openAPI.getPaths().containsKey("/case/{case_urn}/courtschedule/{court_room}"));
+        assertTrue(openAPI.getPaths().containsKey("/case/{case_urn}/courtschedule"));
 
         ApiResponses responses = openAPI.getPaths()
-                .get("/case/{case_urn}/courtschedule/{court_room}")
+                .get("/case/{case_urn}/courtschedule")
                 .getGet()
                 .getResponses();
 
@@ -102,10 +102,10 @@ class OpenAPIConfigurationLoaderTest {
         OpenAPI openAPI = config.openAPI();
 
         assertNotNull(openAPI.getPaths());
-        assertTrue(openAPI.getPaths().containsKey("/case/{case_urn}/courtschedule/{court_room}"));
+        assertTrue(openAPI.getPaths().containsKey("/case/{case_urn}/courtschedule"));
 
         ApiResponses responses = openAPI.getPaths()
-                .get("/case/{case_urn}/courtschedule/{court_room}")
+                .get("/case/{case_urn}/courtschedule")
                 .getGet()
                 .getResponses();
 
