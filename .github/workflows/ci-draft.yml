@@ -71,12 +71,12 @@ jobs:
           java-version: ${{ matrix.java }}
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: current
 
       - name: Download updated OpenAPI file
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: ${{ needs.Update-Spec-Version.outputs.upload_artifact_name }}
           path: ${{ env.FILE_PATH_OPENAPI }}
@@ -120,10 +120,10 @@ jobs:
           java-version: ${{ matrix.java }}
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Download updated OpenAPI file
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: ${{ needs.Update-Spec-Version.outputs.upload_artifact_name }}
           path: ${{ env.FILE_PATH_OPENAPI }}
