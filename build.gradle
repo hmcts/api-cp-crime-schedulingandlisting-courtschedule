@@ -132,20 +132,6 @@ publishing {
   }
 }
 
-//Creation of Software Bill of Materials
-//https://github.com/CycloneDX/cyclonedx-gradle-plugin
-cyclonedxBom {
-  projectType = "library" // or application
-  includeConfigs = ["runtimeClasspath"]
-  skipConfigs = ["test", "testImplementation"]
-  schemaVersion = "1.6"
-  componentVersion = providers.provider { project.version.toString() }
-  destination = file("${layout.buildDirectory.get().asFile.absolutePath}/reports")
-  includeBuildSystem = true
-  outputName = "bom"
-  outputFormat = "json"
-}
-
 jar {
   dependsOn tasks.named('cyclonedxBom')
   if (file("CHANGELOG.md").exists()) {
