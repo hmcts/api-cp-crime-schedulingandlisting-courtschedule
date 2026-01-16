@@ -42,11 +42,6 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          gradle-version: current
-
       - name: Gradle Build and Publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
