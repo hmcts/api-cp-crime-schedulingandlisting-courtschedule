@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.cp.domain.HearingResponse;
+import uk.gov.hmcts.cp.domain.HearingResponse.HearingSchedule;
 import uk.gov.hmcts.cp.domain.HearingResponse.HearingSchedule.Judiciary;
 import uk.gov.hmcts.cp.openapi.model.CourtSchedule;
 import uk.gov.hmcts.cp.openapi.model.CourtScheduleResponse;
@@ -27,6 +28,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component
@@ -104,7 +106,7 @@ public class CourtScheduleClientImpl implements CourtScheduleClient {
         final List<Hearing> hearings = new ArrayList<>();
 
         hearingResponse.getHearings().stream()
-                .filter(HearingResponse.HearingSchedule::isAllocated)
+                .filter(hearing -> hearing.isAllocated() || hearing.getWeekCommencingDurationInWeeks() > 0)
                 .forEach(hr -> {
                     final Hearing hearing = new Hearing();
                     hearing.setHearingId(hr.getId());
