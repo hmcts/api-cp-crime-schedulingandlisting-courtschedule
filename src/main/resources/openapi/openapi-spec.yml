@@ -73,11 +73,11 @@ components:
           type: string
           example: "Judge prefers afternoon start"
         weekCommencingStartDate:
-          description: "Proposed hearing week start Date"
+          description: "Proposed hearing week start date"
           type: string
           example: "2026-02-16"
         weekCommencingEndDate:
-          description: "One week calculated end Date"
+          description: "One week calculated end date"
           type: string
           example: "2026-02-22"
         weekCommencingDurationInWeeks:
