@@ -72,6 +72,18 @@ components:
           description: Will always be required but can be null
           type: string
           example: "Judge prefers afternoon start"
+        weekCommencingStartDate:
+          description: "Proposed hearing week start Date"
+          type: string
+          example: "2026-02-16"
+        weekCommencingEndDate:
+          description: "One week calculated end Date"
+          type: string
+          example: "2026-02-22"
+        weekCommencingDurationInWeeks:
+          description: "Number of week(s) hearing is proposed for"
+          type: integer
+          example: 1
         courtSittings:
           type: array
           items:
