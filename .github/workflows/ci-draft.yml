@@ -103,7 +103,7 @@ jobs:
     needs: [ Artefact-Version, Push-Draft-OpenAPI-Spec ]
     strategy:
       matrix:
-        java: [ 25 ]
+        java: [ 21 ]
 
     steps:
       - name: Checkout source code
