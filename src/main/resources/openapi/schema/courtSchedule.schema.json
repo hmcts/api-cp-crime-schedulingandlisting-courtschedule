@@ -43,6 +43,27 @@
                     "Judge prefers afternoon start"
                   ]
                 },
+                "weekCommencingStartDate": {
+                  "description": "Proposed hearing week start date",
+                  "type": "string",
+                  "examples": [
+                    "2026-02-16"
+                  ]
+                },
+                "weekCommencingEndDate": {
+                  "description": "One week calculated end date",
+                  "type": "string",
+                  "examples": [
+                    "2026-02-22"
+                  ]
+                },
+                "weekCommencingDurationInWeeks": {
+                  "description": "Number of week(s) hearing is proposed for",
+                  "type": "integer",
+                  "examples": [
+                    1
+                  ]
+                },
                 "courtSittings": {
                   "description": "Details of court sittings",
                   "type": "array",
