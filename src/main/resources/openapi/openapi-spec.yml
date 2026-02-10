@@ -13,13 +13,16 @@ info:
     name: MIT
     url: 'https://opensource.org/licenses/MIT'
 
+tags:
+  - name: Court Schedule
+    description: Court Schedule API
 paths:
   /case/{case_urn}/courtschedule:
     get:
+      tags:
+        - Court Schedule
       description: Retrieve details of a court schedule by case URN and court room.
       operationId: getCourtScheduleByCaseUrn
-      tags:
-        - court Schedule
       parameters:
         - in: path
           name: case_urn
@@ -44,12 +47,13 @@ paths:
                       hearingType: "Trial"
                       hearingDescription: "Sentencing for theft case"
                       listNote: "Requires interpreter"
-                      courtSittings:
-                        sittingStart: "2025-03-25T09:00:00Z"
-                        sittingEnd: "2025-03-25T12:00:00Z"
-                        judiciaryId: "123e4567-e89b-12d3-a456-426614174000"
-                        courtHouse: "223e4567-e89b-12d3-a456-426614174111"
-                        courtRoom: "223e4567-e89b-12d3-a456-426614174111"
+                      courtSittings: [ {
+                        sittingStart: "2025-03-18T09:00:00Z",
+                        sittingEnd: "2025-03-25T12:00:00Z",
+                        judiciaryId: "123e4567-e89b-12d3-a456-426614174000",
+                        courtHouse: "223e4567-e89b-12d3-a456-426614174111",
+                        courtRoom: "b7a9cb95-4f7c-4aba-b9a2-8cb1ad3330b2"
+                      }]
                 Week Commencing:
                   summary: Week Commencing Hearing
                   value:
@@ -58,6 +62,7 @@ paths:
                       hearingType: "Trial"
                       hearingDescription: "Sentencing for theft case"
                       listNote: "Requires interpreter"
+                      courtSittings: []
                       weekCommencing:
                         endDate: "2026-02-22"
                         startDate: "2026-02-16"
