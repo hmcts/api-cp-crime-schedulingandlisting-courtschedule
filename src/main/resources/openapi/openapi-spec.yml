@@ -38,10 +38,31 @@ paths:
               examples:
                 Allocated:
                   summary: Allocated Hearing
-                  $ref: "#/components/examples/Allocated"
+                  value:
+                    hearings:
+                      hearingId: "HRG-123410"
+                      hearingType: "Trial"
+                      hearingDescription: "Sentencing for theft case"
+                      listNote: "Requires interpreter"
+                      courtSittings:
+                        sittingStart: "2025-03-25T09:00:00Z"
+                        sittingEnd: "2025-03-25T12:00:00Z"
+                        judiciaryId: "123e4567-e89b-12d3-a456-426614174000"
+                        courtHouse: "223e4567-e89b-12d3-a456-426614174111"
+                        courtRoom: "223e4567-e89b-12d3-a456-426614174111"
                 Week Commencing:
                   summary: Week Commencing Hearing
-                  $ref: "#/components/examples/WeekCommencing"
+                  value:
+                    hearings:
+                      hearingId: "HRG-123906"
+                      hearingType: "Trial"
+                      hearingDescription: "Sentencing for theft case"
+                      listNote: "Requires interpreter"
+                      weekCommencing:
+                        endDate: "2026-02-22"
+                        startDate: "2026-02-16"
+                        durationInWeeks: 1
+                        courtHouse: "223e4567-e89b-12d3-a456-426614174111"
 
         '400':
           description: Bad input parameter
@@ -51,34 +72,6 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
 components:
-  examples:
-    Allocated:
-      summary: Allocated Hearing
-      value:
-        hearings:
-          hearingId: "HRG-123410"
-          hearingType: "Trial"
-          hearingDescription: "Sentencing for theft case"
-          listNote: "Requires interpreter"
-          courtSittings:
-            sittingStart: "2025-03-25T09:00:00Z"
-            sittingEnd: "2025-03-25T12:00:00Z"
-            judiciaryId: "123e4567-e89b-12d3-a456-426614174000"
-            courtHouse: "223e4567-e89b-12d3-a456-426614174111"
-            courtRoom: "223e4567-e89b-12d3-a456-426614174111"
-    WeekCommencing:
-      summary: Week Commencing Hearing
-      value:
-        hearings:
-          hearingId: "HRG-123906"
-          hearingType: "Trial"
-          hearingDescription: "Sentencing for theft case"
-          listNote: "Requires interpreter"
-          weekCommencing:
-            endDate: "2026-02-22"
-            startDate: "2026-02-16"
-            durationInWeeks: 1
-            courtHouse: "223e4567-e89b-12d3-a456-426614174111"
   schemas:
     CourtSchedule:
       type: object
@@ -133,7 +126,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CourtSitting'
-
 
     CourtSitting:
       description: Details of court sittings
