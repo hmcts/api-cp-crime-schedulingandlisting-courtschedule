@@ -43,26 +43,40 @@
                     "Judge prefers afternoon start"
                   ]
                 },
-                "weekCommencingStartDate": {
+                "weekCommencing": {
                   "description": "Proposed hearing week start date",
-                  "type": "string",
-                  "examples": [
-                    "2026-02-16"
-                  ]
-                },
-                "weekCommencingEndDate": {
-                  "description": "One week calculated end date",
-                  "type": "string",
-                  "examples": [
-                    "2026-02-22"
-                  ]
-                },
-                "weekCommencingDurationInWeeks": {
-                  "description": "Number of week(s) hearing is proposed for",
-                  "type": "integer",
-                  "examples": [
-                    1
-                  ]
+                  "type": "object",
+                  "properties": {
+                    "startDate": {
+                      "description": "Proposed hearing week start date",
+                      "type": "string",
+                      "examples": [
+                        "2026-02-16"
+                      ]
+                    },
+                    "endDate": {
+                      "description": "One week calculated end date",
+                      "type": "string",
+                      "examples": [
+                        "2026-02-22"
+                      ]
+                    },
+                    "durationInWeeks": {
+                      "description": "Number of week(s) hearing is proposed for",
+                      "type": "integer",
+                      "examples": [
+                        1
+                      ]
+                    },
+                    "courtHouse": {
+                      "description": "Court house details ref id",
+                      "type": "string",
+                      "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                      "examples": [
+                        "223e4567-e89b-12d3-a456-426614174111"
+                      ]
+                    }
+                  }
                 },
                 "courtSittings": {
                   "description": "Details of court sittings",
