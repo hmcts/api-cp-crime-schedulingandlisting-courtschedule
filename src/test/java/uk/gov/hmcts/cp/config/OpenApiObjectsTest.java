@@ -3,11 +3,8 @@ package uk.gov.hmcts.cp.config;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.cp.openapi.api.CourtScheduleApi;
-import uk.gov.hmcts.cp.openapi.model.CourtSchedule;
-import uk.gov.hmcts.cp.openapi.model.CourtScheduleResponse;
-import uk.gov.hmcts.cp.openapi.model.CourtSitting;
-import uk.gov.hmcts.cp.openapi.model.ErrorResponse;
-import uk.gov.hmcts.cp.openapi.model.Hearing;
+import uk.gov.hmcts.cp.openapi.model.*;
+
 import java.lang.reflect.Field;
 import java.time.Instant;
 
@@ -37,7 +34,12 @@ class OpenApiObjectsTest {
 
     @Test
     void generated_hearing_should_have_expected_fields() {
-        assertThat(Hearing.class).hasDeclaredFields("hearingId", "hearingType", "hearingDescription", "listNote", "weekCommencingStartDate", "weekCommencingEndDate", "weekCommencingDurationInWeeks", "courtSittings");
+        assertThat(Hearing.class).hasDeclaredFields("hearingId", "hearingType", "hearingDescription", "listNote", "weekCommencing", "courtSittings");
+    }
+
+    @Test
+    void generated_week_commencing_should_have_expected_fields() {
+        assertThat(HearingWeekCommencing.class).hasDeclaredFields("startDate", "endDate", "durationInWeeks", "courtHouse");
     }
 
     @Test
