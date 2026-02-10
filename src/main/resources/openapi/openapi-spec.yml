@@ -75,9 +75,9 @@ components:
           hearingDescription: "Sentencing for theft case"
           listNote: "Requires interpreter"
           weekCommencing:
-            weekCommencingEndDate: "2026-02-22"
-            weekCommencingStartDate: "2026-02-16"
-            weekCommencingDurationInWeeks: 1
+            endDate: "2026-02-22"
+            startDate: "2026-02-16"
+            durationInWeeks: 1
             courtHouse: "223e4567-e89b-12d3-a456-426614174111"
   schemas:
     CourtSchedule:
@@ -108,18 +108,27 @@ components:
           description: Will always be required but can be null
           type: string
           example: "Judge prefers afternoon start"
-        weekCommencingStartDate:
-          description: "Proposed hearing week start Date"
-          type: string
-          example: "2026-02-16"
-        weekCommencingEndDate:
-          description: "One week calculated end Date"
-          type: string
-          example: "2026-02-22"
-        weekCommencingDurationInWeeks:
-          description: "Number of week(s) hearing is proposed for"
-          type: integer
-          example: 1
+        weekCommencing:
+          description: Details of Week Commencing Hearing
+          type: object
+          properties:
+            startDate:
+              description: "Proposed hearing week start Date"
+              type: string
+              example: "2026-02-16"
+            endDate:
+              description: "One week calculated end Date"
+              type: string
+              example: "2026-02-22"
+            durationInWeeks:
+              description: "Number of week(s) hearing is proposed for"
+              type: integer
+              example: 1
+            courtHouse:
+              description: Court house details ref id
+              type: string
+              pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+              example: "223e4567-e89b-12d3-a456-426614174111"
         courtSittings:
           type: array
           items:
