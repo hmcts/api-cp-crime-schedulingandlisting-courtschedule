@@ -1,6 +1,6 @@
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(21)
+    languageVersion = JavaLanguageVersion.of(25)
   }
 }
 
@@ -10,6 +10,10 @@ sourceSets {
       srcDir "$buildDir/generated/src/main/java"
     }
   }
+}
+
+tasks.named('wrapper') {
+  delete "${projectDir}/gradlew.bat"
 }
 
 tasks.named('wrapper') {
