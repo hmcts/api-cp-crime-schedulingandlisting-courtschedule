@@ -9,7 +9,14 @@ servers:
 
 info:
   title: Common Platform API Scheduling and Listing Court Schedule
-  description: Scheduling and Listing API providing the court schedule
+  description: |
+    Returns the court hearing schedule for a given case, showing when and where
+    hearings are listed to take place.
+
+    For each hearing the response includes the court building, court room, sitting
+    times, type of hearing, and the judge assigned. Used by listing officers who
+    manage court diaries and by legal teams who need to see upcoming hearing dates
+    for a case.
   version: 0.0.0
   contact:
     email: no-reply@hmcts.com
