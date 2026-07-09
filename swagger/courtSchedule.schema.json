@@ -91,6 +91,11 @@
                       }
                     }
                   }
+                },
+                "lastUpdatedTime": {
+                  "description": "This is the date/time that the hearing details like court Centre, hearing type, hearing date or hearing duration is modified",
+                  "type": "string",
+                  "format": "date-time"
                 }
               }
             }

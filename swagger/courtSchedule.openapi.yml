@@ -76,7 +76,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CourtSitting'
-
+        lastUpdatedTime:
+          description: last updated time of hearing details
+          type: string
+          format: date-time
+          example: "2025-03-25T09:00:00Z"
 
     CourtSitting:
       description: Details of court sittings
