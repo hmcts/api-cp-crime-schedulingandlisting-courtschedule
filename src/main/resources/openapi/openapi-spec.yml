@@ -144,7 +144,7 @@ components:
           items:
             $ref: '#/components/schemas/CourtSitting'
         lastUpdatedTime:
-          description: last updated time of hearing details
+          description: The date and time when the hearing schedule details were last updated
           type: string
           format: date-time
           example: "2025-03-25T09:00:00Z"

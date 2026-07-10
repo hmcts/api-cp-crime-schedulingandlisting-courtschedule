@@ -93,7 +93,7 @@
                   }
                 },
                 "lastUpdatedTime": {
-                  "description": "This is the date/time that the hearing details like court Centre, hearing type, hearing date or hearing duration is modified",
+                  "description": "The date and time when the hearing schedule details were last updated",
                   "type": "string",
                   "format": "date-time"
                 }
