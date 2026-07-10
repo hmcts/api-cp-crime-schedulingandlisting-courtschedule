@@ -65,6 +65,7 @@ paths:
                         courtHouse: "223e4567-e89b-12d3-a456-426614174111",
                         courtRoom: "b7a9cb95-4f7c-4aba-b9a2-8cb1ad3330b2"
                       }]
+                      lastUpdatedTime: "2026-07-09T09:00:00Z"
                 Week Commencing:
                   summary: Week Commencing Hearing
                   value:
@@ -79,7 +80,7 @@ paths:
                         startDate: "2026-02-16"
                         durationInWeeks: 1
                         courtHouse: "223e4567-e89b-12d3-a456-426614174111"
-
+                      lastUpdatedTime: "2026-07-09T09:00:00Z"
         '400':
           description: Bad input parameter
           content:
@@ -142,6 +143,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CourtSitting'
+        lastUpdatedTime:
+          description: The date and time when the hearing schedule details were last updated
+          type: string
+          format: date-time
+          example: "2025-03-25T09:00:00Z"
 
     CourtSitting:
       description: Details of court sittings

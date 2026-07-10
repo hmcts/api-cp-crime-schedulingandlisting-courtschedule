@@ -34,7 +34,7 @@ class OpenApiObjectsTest {
 
     @Test
     void generated_hearing_should_have_expected_fields() {
-        assertThat(Hearing.class).hasDeclaredFields("hearingId", "hearingType", "hearingDescription", "listNote", "weekCommencing", "courtSittings");
+        assertThat(Hearing.class).hasDeclaredFields("hearingId", "hearingType", "hearingDescription", "listNote", "weekCommencing", "courtSittings", "lastUpdatedTime");
     }
 
     @Test
