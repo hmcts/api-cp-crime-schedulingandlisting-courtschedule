@@ -4,7 +4,9 @@ locals {
     api_key => yamldecode(file(api.openapi_spec_path))
   }
 
-  service_url = "https://spnl-${var.env}-apim-int-gw.cpp.nonlive/amp/slc"
+  apim_gw_host = "spnl-${var.env}-apim-int-gw"
+  apim_gw_fqdn = "${local.apim_gw_host}.${join(".", ["cpp", "nonlive"])}"
+  service_url  = "https://${local.apim_gw_fqdn}/amp/slc"
 }
 
 module "apis" {
