@@ -71,7 +71,6 @@ variable "apis" {
   description = "Map of APIs to register in APIM. Details are sourced from the referenced OpenAPI spec file."
   type = map(object({
     openapi_spec_path     = string
-    service_url           = string
     name                  = optional(string)
     display_name          = optional(string)
     path                  = optional(string)

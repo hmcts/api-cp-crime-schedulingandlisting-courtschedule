@@ -14,7 +14,6 @@ apim_product = {
 apis = {
   courtschedule = {
     openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
-    service_url       = "https://spnl-sbox-apim-int-gw.cpp.nonlive/amp/slc"
     revision          = "1"
   }
 }
