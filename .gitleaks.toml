@@ -1,0 +1,5 @@
+[allowlist]
+  description = "Allowlist for known internal infrastructure URLs in Terraform config"
+  paths = [
+    "infrastructure/.*\\.tfvars"
+  ]
