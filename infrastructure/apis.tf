@@ -36,7 +36,7 @@ module "apis" {
 
   path = coalesce(
     try(each.value.path, null),
-    trim(try(keys(local.api_specs[each.key].paths)[0], each.key), "/")
+    lower(replace(each.key, "/[^0-9A-Za-z-]/", "-"))
   )
 
   protocols             = each.value.protocols
