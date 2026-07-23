@@ -24,12 +24,12 @@ module "apis" {
 
   name = coalesce(
     try(each.value.name, null),
-    lower(regexreplace(
+    lower(replace(
       coalesce(
         try(local.api_specs[each.key].info.title, null),
         each.key
       ),
-      "[^0-9A-Za-z-]",
+      "/[^0-9A-Za-z-]/",
       "-"
     ))
   )
