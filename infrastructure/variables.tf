@@ -67,6 +67,11 @@ variable "apim_product" {
   })
 }
 
+variable "service_host" {
+  type        = string
+  description = "Backend service hostname prefix (appended with .org.uk in apis.tf)."
+}
+
 variable "apis" {
   description = "Map of APIs to register in APIM. Details are sourced from the referenced OpenAPI spec file."
   type = map(object({
