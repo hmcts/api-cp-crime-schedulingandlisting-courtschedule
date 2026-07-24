@@ -3,10 +3,6 @@ locals {
     for api_key, api in var.apis :
     api_key => yamldecode(file(api.openapi_spec_path))
   }
-
-  apim_gw_host = "spnl-${var.env}-apim-int-gw"
-  apim_gw_fqdn = "${local.apim_gw_host}.${join(".", ["cpp", "nonlive"])}"
-  service_url  = "https://${local.apim_gw_fqdn}/amp/slc"
 }
 
 module "apis" {
@@ -44,7 +40,7 @@ module "apis" {
   )
 
   protocols             = each.value.protocols
-  service_url           = local.service_url
+  service_url           = var.service_url
   subscription_required = each.value.subscription_required
   api_type              = each.value.api_type
 

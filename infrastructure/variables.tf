@@ -67,6 +67,11 @@ variable "apim_product" {
   })
 }
 
+variable "service_url" {
+  type        = string
+  description = "Backend service base URL. Set per environment in tfvars."
+}
+
 variable "apis" {
   description = "Map of APIs to register in APIM. Details are sourced from the referenced OpenAPI spec file."
   type = map(object({

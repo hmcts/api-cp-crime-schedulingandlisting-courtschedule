@@ -1,5 +1,6 @@
 api_mgmt_rg   = "rg-sps-platform-sbox"
 api_mgmt_name = "sps-api-mgmt-sbox"
+service_url   = "https://devamp01.ingress01.dev.nl.cjscp.org.uk"
 
 apim_product = {
   name                          = "cp-crime-schedulingandlisting"
