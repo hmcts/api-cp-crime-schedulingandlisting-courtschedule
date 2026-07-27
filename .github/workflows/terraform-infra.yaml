@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Terraform format check
         uses: hmcts/cnp-githubactions-library/terraform-fmt@main
@@ -60,7 +60,7 @@ jobs:
       has_envs: ${{ steps.matrix.outputs.has_envs }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build deployment matrix from tfvars files
         id: matrix
