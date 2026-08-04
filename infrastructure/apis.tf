@@ -3,8 +3,6 @@ locals {
     for api_key, api in var.apis :
     api_key => yamldecode(file(api.openapi_spec_path))
   }
-
-  service_url = "https://${var.service_host}.org.uk"
 }
 
 module "apis" {
@@ -42,7 +40,7 @@ module "apis" {
   )
 
   protocols             = each.value.protocols
-  service_url           = local.service_url
+  service_url           = "https://${each.value.service_host}.org.uk"
   subscription_required = each.value.subscription_required
   api_type              = each.value.api_type
 

@@ -63,19 +63,24 @@ variable "apim_product" {
     approval_required             = optional(bool, true)
     published                     = optional(bool, true)
     product_access_control_groups = optional(list(string), [])
-    product_policy                = optional(string, "")
   })
 }
 
-variable "service_host" {
+variable "entra_tenant_id" {
   type        = string
-  description = "Backend service hostname prefix (appended with .org.uk in apis.tf)."
+  description = "Entra tenant ID used in the product JWT validation policy."
+}
+
+variable "entra_client_id" {
+  type        = string
+  description = "Entra client ID (audience) used in the product JWT validation policy."
 }
 
 variable "apis" {
   description = "Map of APIs to register in APIM. Details are sourced from the referenced OpenAPI spec file."
   type = map(object({
     openapi_spec_path     = string
+    service_host          = string
     name                  = optional(string)
     display_name          = optional(string)
     path                  = optional(string)
