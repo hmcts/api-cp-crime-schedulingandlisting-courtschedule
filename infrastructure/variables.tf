@@ -81,6 +81,7 @@ variable "apis" {
   type = map(object({
     openapi_spec_path     = string
     service_host          = string
+    service_path          = optional(string, "")
     name                  = optional(string)
     display_name          = optional(string)
     path                  = optional(string)
