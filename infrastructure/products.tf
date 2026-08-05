@@ -9,8 +9,5 @@ module "product" {
   approval_required             = var.apim_product.approval_required
   published                     = var.apim_product.published
   product_access_control_groups = var.apim_product.product_access_control_groups
-  product_policy = templatefile("${path.module}/policies/product-policy.xml", {
-    tenant_id = var.entra_tenant_id
-    client_id = var.entra_client_id
-  })
+  product_policy                = ""
 }

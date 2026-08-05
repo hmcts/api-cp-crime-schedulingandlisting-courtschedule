@@ -26,7 +26,7 @@
                     <set-header name="Content-Type" exists-action="override">
                         <value>application/json</value>
                     </set-header>
-                    <set-body>{"error":"Missing Authorization header."}</set-body>
+                    <set-body>{"error":"Missing CNP Authorization header."}</set-body>
                 </return-response>
             </otherwise>
         </choose>
