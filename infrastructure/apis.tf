@@ -47,3 +47,18 @@ module "apis" {
   swagger_url    = file(each.value.openapi_spec_path)
   content_format = "openapi"
 }
+
+resource "azurerm_api_management_api_policy" "api_policy" {
+  for_each = var.apis
+
+  api_name            = module.apis[each.key].name
+  api_management_name = var.api_mgmt_name
+  resource_group_name = var.api_mgmt_rg
+
+  xml_content = templatefile("${path.module}/policies/api-policy.xml", {
+    tenant_id = var.entra_tenant_id
+    client_id = var.entra_client_id
+  })
+
+  depends_on = [module.apis]
+}
