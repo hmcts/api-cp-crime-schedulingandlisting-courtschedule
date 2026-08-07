@@ -126,11 +126,6 @@
                       }
                     }
                   }
-                },
-                "lastUpdatedTime": {
-                  "description": "The date and time when the hearing schedule details were last updated",
-                  "type": "string",
-                  "format": "date-time"
                 }
               }
             }
