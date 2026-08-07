@@ -10,8 +10,8 @@ apim_product = {
   product_access_control_groups = ["developers", "administrators", "guests"]
 }
 
-entra_tenant_id = "e2995d11-9947-4e78-9de6-d44e0603518e"
-entra_client_id = "b69a4519-354b-481b-88a5-65ab7c83273e"
+entra_tenant_id = "d44f885c-4fac-47bf-afde-d7d861ec4d7b"
+entra_client_id = "472c23a2-9d6a-4a6e-8008-3eb08cef759c"
 
 apis = {
   courtschedule = {
