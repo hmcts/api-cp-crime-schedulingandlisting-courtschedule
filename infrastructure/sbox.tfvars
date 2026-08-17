@@ -16,8 +16,8 @@ entra_client_id = "30288840-e345-4543-99ee-f9253d789339"
 apis = {
   courtschedule = {
     openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
-    service_host      = "spnl-dev-apim-int-gw.dev.nl.cjscp"
-    service_path      = "/amp/slc"
+    service_host      = "devamp01-appgw.dev.nl.cjscp"
+    service_path      = ""
     revision          = "1"
   }
 }
