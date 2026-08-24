@@ -19,7 +19,7 @@ apis = {
     display_name      = "Crime Scheduling and Listing Schedule API"
     path              = "amp/slc"
     service_host      = "devamp01-appgw.dev.nl.cjscp"
-    service_path      = ""
+    service_path      = "/slc"
     revision          = "1"
   }
 }
