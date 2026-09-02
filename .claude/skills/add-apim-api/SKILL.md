@@ -77,11 +77,7 @@ service_host = "devamp01-appgw.dev.nl.cjscp"
 service_path = ""
 ```
 
-**Never commit** a full URL:
-```hcl
-# DO NOT DO THIS
-service_url = "https://devamp01-appgw.dev.nl.cjscp.org.uk"
-```
+**Never commit** a full URL — the secrets scanner will block it (matches `.cjscp.org.uk`).
 
 `apis.tf` reconstructs the full backend URL automatically:
 ```hcl
