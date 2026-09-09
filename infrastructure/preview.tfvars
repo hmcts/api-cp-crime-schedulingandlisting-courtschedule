@@ -18,7 +18,7 @@ apis = {
     openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
     display_name      = "Crime Scheduling and Listing Schedule API (slc)"
     path              = "amp/slc"
-    service_host      = "devamp01-appgw.dev.nl.cjscp"
+    service_host      = "sitamp01-appgw.sit.nl.cjscp"
     service_path      = "/slc"
     revision          = "1"
   }
