@@ -1,5 +1,18 @@
 <policies>
     <inbound>
+        <cors allow-credentials="false">
+            <allowed-origins>
+                <origin>https://hmcts.github.io</origin>
+            </allowed-origins>
+            <allowed-methods>
+                <method>GET</method>
+            </allowed-methods>
+            <allowed-headers>
+                <header>Authorization</header>
+                <header>Ocp-Apim-Subscription-Key</header>
+                <header>Content-Type</header>
+            </allowed-headers>
+        </cors>
         <choose>
             <when condition="@(context.Request.Headers.ContainsKey(&quot;Authorization&quot;))">
                 <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Your JWT token failed CNP validation! ">
