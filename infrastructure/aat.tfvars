@@ -1,5 +1,5 @@
-api_mgmt_rg   = "rg-sps-platform-preview"
-api_mgmt_name = "sps-api-mgmt-preview"
+api_mgmt_rg   = "rg-sps-platform-aat"
+api_mgmt_name = "sps-api-mgmt-aat"
 
 apim_product = {
   name                          = "cp-crime-schedulingandlisting"
@@ -10,7 +10,7 @@ apim_product = {
   product_access_control_groups = ["developers", "administrators", "guests"]
 }
 
-entra_tenant_id = "d44f885c-4fac-47bf-afde-d7d861ec4d7b"
+entra_tenant_id = "db827888-77df-4707-b3d9-24a3dfe32889"
 entra_client_id = "30288840-e345-4543-99ee-f9253d789339"
 
 apis = {
@@ -18,7 +18,7 @@ apis = {
     openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
     display_name      = "Crime Scheduling and Listing Schedule API (slc)"
     path              = "amp/slc"
-    service_host      = "sitamp01-appgw.sit.nl.cjscp"
+    service_host      = "prpamp01-appgw.sit.nl.cjscp"
     service_path      = "/slc"
     revision          = "1"
   }
