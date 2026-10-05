@@ -11,7 +11,7 @@ apim_product = {
 }
 
 entra_tenant_id = "0d0315f6-3c04-4edb-ac37-b05f580cc122"
-#entra_client_id = "30288840-e345-4543-99ee-f9253d789339"
+entra_client_id = "7d4eb263-0332-420a-8beb-a3cd5cc64b92"
 
 apis = {
   courtschedule = {
