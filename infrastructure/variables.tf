@@ -89,5 +89,12 @@ variable "apis" {
     protocols             = optional(list(string), ["https"])
     subscription_required = optional(bool, true)
     api_type              = optional(string, "http")
+    # Entra app roles on hmcts-api-marketplace accepted for this API; a token needs any one of them.
+    required_roles = optional(list(string), ["app.read"])
   }))
+
+  validation {
+    condition     = alltrue([for api in values(var.apis) : length(api.required_roles) > 0])
+    error_message = "Each API must have at least one required_roles entry."
+  }
 }
