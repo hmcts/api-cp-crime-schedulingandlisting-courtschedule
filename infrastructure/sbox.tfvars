@@ -23,5 +23,6 @@ apis = {
     service_path      = "/slc"
     revision          = "1"
     required_roles    = ["slc.read", "app.read"]
+    consumers         = ["amp-test-external-client"]
   }
 }

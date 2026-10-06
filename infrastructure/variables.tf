@@ -112,5 +112,11 @@ variable "apis" {
 
 variable "subscription_key_vault_name" {
   type        = string
-  description = "Key Vault (in api_mgmt_rg) where API subscription keys are stored as secrets."
+  description = "Key Vault (in api_mgmt_rg) where API subscription keys are stored as secrets. Required when any API has consumers."
+  default     = null
+
+  validation {
+    condition     = var.subscription_key_vault_name != null || alltrue([for api in values(var.apis) : length(api.consumers) == 0])
+    error_message = "subscription_key_vault_name must be set when any API has consumers."
+  }
 }
