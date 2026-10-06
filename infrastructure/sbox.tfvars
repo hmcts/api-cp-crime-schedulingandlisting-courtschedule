@@ -1,5 +1,6 @@
-api_mgmt_rg   = "rg-sps-platform-sbox"
-api_mgmt_name = "sps-api-mgmt-sbox"
+api_mgmt_rg                 = "rg-sps-platform-sbox"
+api_mgmt_name               = "sps-api-mgmt-sbox"
+subscription_key_vault_name = "kvspsplatformsbox"
 
 apim_product = {
   name                          = "cp-crime-schedulingandlisting"

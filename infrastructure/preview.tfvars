@@ -1,5 +1,6 @@
-api_mgmt_rg   = "rg-sps-platform-preview"
-api_mgmt_name = "sps-api-mgmt-preview"
+api_mgmt_rg                 = "rg-sps-platform-preview"
+api_mgmt_name               = "sps-api-mgmt-preview"
+subscription_key_vault_name = "kvspsplatformpreview"
 
 apim_product = {
   name                          = "cp-crime-schedulingandlisting"

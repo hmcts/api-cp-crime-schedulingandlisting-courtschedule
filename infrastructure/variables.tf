@@ -91,10 +91,26 @@ variable "apis" {
     api_type              = optional(string, "http")
     # Entra app roles on hmcts-api-marketplace accepted for this API; a token needs any one of them.
     required_roles = optional(list(string), ["app.read"])
+    # Consumers that get an API-scoped APIM subscription; each key is stored in Key Vault.
+    consumers = optional(list(string), [])
   }))
 
   validation {
     condition     = alltrue([for api in values(var.apis) : length(api.required_roles) > 0])
     error_message = "Each API must have at least one required_roles entry."
   }
+
+  validation {
+    condition = alltrue(flatten([
+      for api_key, api in var.apis : [
+        for consumer in api.consumers : can(regex("^[0-9A-Za-z-]{1,90}$", "${api_key}-${consumer}"))
+      ]
+    ]))
+    error_message = "API keys and consumer names may only contain letters, digits and hyphens (used in Key Vault secret names)."
+  }
+}
+
+variable "subscription_key_vault_name" {
+  type        = string
+  description = "Key Vault (in api_mgmt_rg) where API subscription keys are stored as secrets."
 }

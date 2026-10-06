@@ -1,5 +1,6 @@
-api_mgmt_rg   = "rg-sps-platform-aat"
-api_mgmt_name = "sps-api-mgmt-aat"
+api_mgmt_rg                 = "rg-sps-platform-aat"
+api_mgmt_name               = "sps-api-mgmt-aat"
+subscription_key_vault_name = "kvspsplatformaat"
 
 apim_product = {
   name                          = "cp-crime-schedulingandlisting"
@@ -22,5 +23,6 @@ apis = {
     service_path      = "/slc"
     revision          = "1"
     required_roles    = ["slc.read", "app.read"]
+    consumers         = ["amp-test-external-client"]
   }
 }
