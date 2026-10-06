@@ -120,3 +120,9 @@ variable "subscription_key_vault_name" {
     error_message = "subscription_key_vault_name must be set when any API has consumers."
   }
 }
+
+variable "create_subscription_user" {
+  type        = bool
+  description = "Create the shared 'amp-subscriptions' APIM user that owns consumer subscriptions. Set true in exactly one repo per APIM instance; other repos look it up."
+  default     = false
+}
