@@ -53,32 +53,33 @@ paths:
                 Allocated:
                   summary: Allocated Hearing
                   value:
-                    hearings:
-                      hearingId: "HRG-123410"
-                      hearingType: "Trial"
-                      hearingDescription: "Sentencing for theft case"
-                      listNote: "Requires interpreter"
-                      courtSittings: [ {
-                        sittingStart: "2025-03-18T09:00:00Z",
-                        sittingEnd: "2025-03-25T12:00:00Z",
-                        judiciaryId: "123e4567-e89b-12d3-a456-426614174000",
-                        courtHouse: "223e4567-e89b-12d3-a456-426614174111",
-                        courtRoom: "b7a9cb95-4f7c-4aba-b9a2-8cb1ad3330b2"
-                      }]
+                    courtSchedule:
+                      - hearings:
+                          - hearingId: "HRG-123410"
+                            hearingType: "Trial"
+                            hearingDescription: "Sentencing for theft case"
+                            listNote: "Requires interpreter"
+                            courtSittings:
+                              - sittingStart: "2025-03-18T09:00:00Z"
+                                sittingEnd: "2025-03-25T12:00:00Z"
+                                judiciaryId: "123e4567-e89b-12d3-a456-426614174000"
+                                courtHouse: "223e4567-e89b-12d3-a456-426614174111"
+                                courtRoom: "b7a9cb95-4f7c-4aba-b9a2-8cb1ad3330b2"
                 Week Commencing:
                   summary: Week Commencing Hearing
                   value:
-                    hearings:
-                      hearingId: "HRG-123906"
-                      hearingType: "Trial"
-                      hearingDescription: "Sentencing for theft case"
-                      listNote: "Requires interpreter"
-                      courtSittings: []
-                      weekCommencing:
-                        endDate: "2026-02-22"
-                        startDate: "2026-02-16"
-                        durationInWeeks: 1
-                        courtHouse: "223e4567-e89b-12d3-a456-426614174111"
+                    courtSchedule:
+                      - hearings:
+                          - hearingId: "HRG-123906"
+                            hearingType: "Trial"
+                            hearingDescription: "Sentencing for theft case"
+                            listNote: "Requires interpreter"
+                            courtSittings: []
+                            weekCommencing:
+                              startDate: "2026-02-16"
+                              endDate: "2026-02-22"
+                              durationInWeeks: 1
+                              courtHouse: "223e4567-e89b-12d3-a456-426614174111"
 
         '400':
           description: Bad input parameter
@@ -91,6 +92,8 @@ components:
   schemas:
     CourtSchedule:
       type: object
+      required:
+        - hearings
       properties:
           hearings:
             type: array
@@ -100,6 +103,11 @@ components:
     Hearing:
       description: Details of hearings associated with the court schedule
       type: object
+      required:
+        - hearingId
+        - hearingType
+        - listNote
+        - courtSittings
       properties:
         hearingId:
           description: Id of the hearing associated with the scheduling system
@@ -116,10 +124,16 @@ components:
         listNote:
           description: Will always be required but can be null
           type: string
+          nullable: true
           example: "Judge prefers afternoon start"
         weekCommencing:
           description: Details of Week Commencing Hearing
           type: object
+          required:
+            - startDate
+            - endDate
+            - durationInWeeks
+            - courtHouse
           properties:
             startDate:
               description: "Proposed hearing week start Date"
@@ -146,6 +160,11 @@ components:
     CourtSitting:
       description: Details of court sittings
       type: object
+      required:
+        - sittingStart
+        - sittingEnd
+        - courtHouse
+        - courtRoom
       properties:
         sittingStart:
           description: Sitting Start Time
@@ -175,6 +194,8 @@ components:
 
     CourtScheduleResponse:
       type: object
+      required:
+        - courtSchedule
       properties:
         courtSchedule:
           type: array

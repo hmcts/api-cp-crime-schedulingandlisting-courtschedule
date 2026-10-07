@@ -3,16 +3,28 @@
   "$id": "http://justice.gov.uk/courtSchedule.schema.json",
   "title": "courtSchedule",
   "type": "object",
+  "required": [
+    "courtSchedule"
+  ],
   "properties": {
     "courtSchedule": {
       "type": "array",
       "items": {
         "type": "object",
+        "required": [
+          "hearings"
+        ],
         "properties": {
           "hearings": {
             "type": "array",
             "items": {
               "type": "object",
+              "required": [
+                "hearingId",
+                "hearingType",
+                "listNote",
+                "courtSittings"
+              ],
               "description": "Hearing details of the case and associated details for the sitting",
               "properties": {
                 "hearingId": {
@@ -38,7 +50,10 @@
                 },
                 "listNote": {
                   "description": "Will always be required but can be null",
-                  "type": "string",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "examples": [
                     "Judge prefers afternoon start"
                   ]
@@ -46,6 +61,12 @@
                 "weekCommencing": {
                   "description": "Proposed hearing week start date",
                   "type": "object",
+                  "required": [
+                    "startDate",
+                    "endDate",
+                    "durationInWeeks",
+                    "courtHouse"
+                  ],
                   "properties": {
                     "startDate": {
                       "description": "Proposed hearing week start date",
@@ -83,6 +104,12 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "required": [
+                      "sittingStart",
+                      "sittingEnd",
+                      "courtHouse",
+                      "courtRoom"
+                    ],
                     "properties": {
                       "sittingStart": {
                         "description": "Sitting Start Time",
