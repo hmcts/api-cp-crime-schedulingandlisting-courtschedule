@@ -58,6 +58,8 @@ jobs:
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
       has_envs: ${{ steps.matrix.outputs.has_envs }}
+      apply_aat: ${{ steps.matrix.outputs.apply_aat }}
+      apply_prod: ${{ steps.matrix.outputs.apply_prod }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -65,11 +67,18 @@ jobs:
       - name: Build deployment matrix from tfvars files
         id: matrix
         shell: bash
+        env:
+          # Apply runs on push to main, or a manual "apply" on main. Everything else is plan-only.
+          IS_APPLY: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event.inputs.overrideAction == 'apply') }}
+          # Environments that need a reviewer's approval before apply (see the gated jobs below).
+          GATED_ENVS: "aat prod"
         run: |
           set -euo pipefail
 
           matrix='[]'
           found="false"
+          apply_aat="false"
+          apply_prod="false"
 
           for file in infrastructure/*.tfvars; do
             if [ ! -f "$file" ]; then
@@ -79,6 +88,15 @@ jobs:
             env_name="${file%.tfvars}"
             env_name="${env_name#infrastructure/}"
             env_upper="$(echo "$env_name" | tr '[:lower:]-' '[:upper:]_')"
+
+            # On apply, gated environments are deployed by their own approval-gated jobs.
+            if [ "$IS_APPLY" = "true" ] && [[ " $GATED_ENVS " == *" $env_name "* ]]; then
+              case "$env_name" in
+                aat) apply_aat="true" ;;
+                prod) apply_prod="true" ;;
+              esac
+              continue
+            fi
 
             if [ "$env_name" = "prod" ]; then
               storage_var="TFSTATE_STORAGE_ACCOUNT_PROD"
@@ -106,6 +124,8 @@ jobs:
 
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           echo "has_envs=$found" >> "$GITHUB_OUTPUT"
+          echo "apply_aat=$apply_aat" >> "$GITHUB_OUTPUT"
+          echo "apply_prod=$apply_prod" >> "$GITHUB_OUTPUT"
 
   terraform:
     name: Terraform ${{ matrix.environment }}
@@ -134,5 +154,69 @@ jobs:
       working-directory: infrastructure
       plan-only: ${{ github.event_name == 'pull_request' || (github.event_name ==
         'workflow_dispatch' && github.event.inputs.overrideAction == 'plan') }}
+      product: cp-crime-schedulingandlisting
+      post-plan-to-pr: true
+
+  # ── Approval-gated applies ─────────────────────────────────────────────────
+  # The approval lives in its own job: a job calling a reusable workflow cannot set
+  # `environment:`, and running the Azure login inside a GitHub environment would change
+  # the OIDC subject to `environment:<name>`, which the DTS AMp federated credentials
+  # do not trust. Reviewers are configured on the `aat` and `prod` GitHub environments.
+  approve-aat:
+    name: Approve aat apply
+    needs: [ discover-environments ]
+    if: ${{ needs['discover-environments'].outputs.apply_aat == 'true' }}
+    runs-on: ubuntu-latest
+    environment: aat
+    steps:
+      - run: echo "aat apply approved by ${{ github.actor }}"
+
+  terraform-aat:
+    name: Terraform aat
+    needs: [ approve-aat ]
+    uses: hmcts/cnp-githubactions-library/.github/workflows/terraform-deploy-openId.yaml@main
+    with:
+      environment: aat
+      subscription: ${{ vars.AZURE_SUBSCRIPTION_AAT }}
+      aks-subscription: ${{ vars.AZURE_SUBSCRIPTION_AAT }}
+      storage-account: ${{ vars.TFSTATE_STORAGE_ACCOUNT_NONPROD }}
+      azure-client-id: ${{ vars.AZURE_CLIENT_ID_AAT }}
+      azure-subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID_AAT }}
+      state-store-resource-group: rg-sps-platform-aat
+      state-store-account-name: spsapimapiaatstate
+      state-store-container-name: terraform-state
+      state-store-use-entra-id-auth: true
+      working-directory: infrastructure
+      plan-only: false
+      product: cp-crime-schedulingandlisting
+      post-plan-to-pr: true
+
+  # prod is only offered for approval once aat has applied successfully.
+  approve-prod:
+    name: Approve prod apply
+    needs: [ discover-environments, terraform-aat ]
+    if: ${{ needs['discover-environments'].outputs.apply_prod == 'true' && needs['terraform-aat'].result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - run: echo "prod apply approved by ${{ github.actor }}"
+
+  terraform-prod:
+    name: Terraform prod
+    needs: [ approve-prod ]
+    uses: hmcts/cnp-githubactions-library/.github/workflows/terraform-deploy-openId.yaml@main
+    with:
+      environment: prod
+      subscription: ${{ vars.AZURE_SUBSCRIPTION_PROD }}
+      aks-subscription: ${{ vars.AZURE_SUBSCRIPTION_PROD }}
+      storage-account: ${{ vars.TFSTATE_STORAGE_ACCOUNT_PROD }}
+      azure-client-id: ${{ vars.AZURE_CLIENT_ID_PROD }}
+      azure-subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID_PROD }}
+      state-store-resource-group: rg-sps-platform-prod
+      state-store-account-name: spsapimapiprodstate
+      state-store-container-name: terraform-state
+      state-store-use-entra-id-auth: true
+      working-directory: infrastructure
+      plan-only: false
       product: cp-crime-schedulingandlisting
       post-plan-to-pr: true
