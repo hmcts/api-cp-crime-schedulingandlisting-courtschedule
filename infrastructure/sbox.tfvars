@@ -1,5 +1,7 @@
-api_mgmt_rg   = "rg-sps-platform-sbox"
-api_mgmt_name = "sps-api-mgmt-sbox"
+api_mgmt_rg                 = "rg-sps-platform-sbox"
+api_mgmt_name               = "sps-api-mgmt-sbox"
+subscription_key_vault_name = "kvspsplatformsbox"
+create_subscription_user    = true
 
 apim_product = {
   name                          = "cp-crime-schedulingandlisting"
@@ -22,5 +24,6 @@ apis = {
     service_path      = "/slc"
     revision          = "1"
     required_roles    = ["slc.read", "app.read"]
+    consumers         = ["amp-test-external-client"]
   }
 }

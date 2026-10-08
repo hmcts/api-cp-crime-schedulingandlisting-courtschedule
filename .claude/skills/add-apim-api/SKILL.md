@@ -67,6 +67,11 @@ Add this block inside `apis = {` in each environment's `*.tfvars`:
   }
 ```
 
+### Optional fields
+
+- **`required_roles`** — Entra app roles on `hmcts-api-marketplace` that the JWT must carry (any one). Defaults to `["app.read"]`; use `["{shortname}.read", "app.read"]` once the per-API role exists in that environment's tenant.
+- **`consumers`** — consumer names that get an API-scoped APIM subscription. Each primary key is stored in `subscription_key_vault_name` as `amp-apim-sub-{env}-{consumer}-{map-key}-primary-key`. Subscriptions are owned by the shared `amp-subscriptions` APIM user; set `create_subscription_user = true` in only one repo per APIM instance.
+
 ## Secrets Scanner Rule
 
 The HMCTS secrets scanner flags URLs containing `.cjscp.org.uk`, `.cpp.nonlive`, `.cpp.live`, or `.vault.azure.net`.
