@@ -98,3 +98,12 @@ variable "apis" {
     error_message = "Each API must have at least one required_roles entry."
   }
 }
+
+variable "entra_token_helper" {
+  description = "Sandbox only. When set, publishes a portal API that swaps a client's own credentials for an Entra token. Leave unset in every other environment."
+  type = object({
+    # Application Insights logger whose body logging is switched off for that API.
+    app_insights_logger_name = string
+  })
+  default = null
+}
