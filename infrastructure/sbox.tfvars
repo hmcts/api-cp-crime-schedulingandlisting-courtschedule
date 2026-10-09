@@ -24,3 +24,8 @@ apis = {
     required_roles    = ["slc.read", "app.read"]
   }
 }
+
+# Lets clients get a token with their own credentials in the sandbox portal (see entra-token.tf).
+entra_token_helper = {
+  app_insights_logger_name = "sps-api-mgmt-sbox-logger"
+}
