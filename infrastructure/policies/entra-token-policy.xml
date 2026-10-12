@@ -47,7 +47,7 @@
                 + &quot;&amp;client_secret=&quot; + Uri.EscapeDataString(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;clientSecret&quot;))
                 + &quot;&amp;scope=&quot; + Uri.EscapeDataString(scope);
         }</set-body>
-        <rate-limit-by-key calls="10" renewal-period="60" counter-key="@((context.Subscription?.Key ?? context.Request.IpAddress) + &quot;:entra-token&quot;)" />
+        <rate-limit-by-key calls="10" renewal-period="60" counter-key="@(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;clientId&quot;) + &quot;:entra-token&quot;)" />
     </inbound>
     <backend>
         <forward-request />

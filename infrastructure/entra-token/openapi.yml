@@ -6,8 +6,8 @@ info:
     try the Court Schedule API in this portal with your own app registration.
 
     1. Select **Try it** on the operation below.
-    2. Add your subscription key, and replace the request body's `client_id` and
-       `client_secret` with your app's values. Leave `scope` as it is to get a token
+    2. Replace the request body's `client_id` and `client_secret` with your app's
+       values. No subscription key is needed. Leave `scope` as it is to get a token
        for the Court Schedule API.
     3. Send, and copy `access_token` from the response.
     4. On the [Court Schedule API](https://amp-portal.sandbox.api.hmcts.net/api-details#api=common-platform-api-scheduling-and-listing-court-schedule&operation=getCourtScheduleByCaseUrn),
