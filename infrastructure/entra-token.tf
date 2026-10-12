@@ -27,7 +27,7 @@ resource "azurerm_api_management_api" "entra_token" {
   path                  = "amp/slc-token"
   protocols             = ["https"]
   service_url           = "https://login.microsoftonline.com/${var.entra_tenant_id}/oauth2/v2.0"
-  subscription_required = true
+  subscription_required = false
 
   import {
     content_format = "openapi"
@@ -35,7 +35,7 @@ resource "azurerm_api_management_api" "entra_token" {
   }
 }
 
-# Same product as the Court Schedule API, so the subscription key a client already has works.
+# Same product as the Court Schedule API, so the portal shows the two APIs to the same groups.
 resource "azurerm_api_management_product_api" "entra_token" {
   count = local.entra_token_enabled ? 1 : 0
 
