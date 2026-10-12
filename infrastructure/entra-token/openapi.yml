@@ -1,0 +1,63 @@
+openapi: 3.0.0
+info:
+  title: Get an Entra access token (sandbox)
+  description: |
+    Sandbox only. Swaps your client credentials for an Entra access token, so you can
+    try the Court Schedule API in this portal with your own app registration.
+
+    1. Select **Try it** on the operation below.
+    2. Add your subscription key, and replace the request body's `client_id` and
+       `client_secret` with your app's values. Leave `scope` as it is to get a token
+       for the Court Schedule API.
+    3. Send, and copy `access_token` from the response.
+    4. On the [Court Schedule API](https://amp-portal.sandbox.api.hmcts.net/api-details#api=common-platform-api-scheduling-and-listing-court-schedule&operation=getCourtScheduleByCaseUrn),
+       select **Try it** and add the header `Authorization: Bearer <access_token>`.
+
+    Your secret is passed straight to Entra and is not logged. Outside the portal, call
+    the Entra token endpoint directly instead.
+  version: 1.0.0
+paths:
+  /token:
+    post:
+      operationId: getEntraToken
+      summary: Get an access token with your client credentials
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - client_id
+                - client_secret
+              properties:
+                client_id:
+                  type: string
+                  description: Your app registration's client ID.
+                client_secret:
+                  type: string
+                  description: A client secret for that app registration.
+                scope:
+                  type: string
+                  description: Must end in /.default. Defaults to the Court Schedule API.
+            example: client_id=<your-client-id>&client_secret=<your-client-secret>&scope=30288840-e345-4543-99ee-f9253d789339/.default
+      responses:
+        '200':
+          description: The access token, issued by Entra.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token_type:
+                    type: string
+                    example: Bearer
+                  expires_in:
+                    type: integer
+                    example: 3599
+                  access_token:
+                    type: string
+        '400':
+          description: A field is missing, the scope does not end in /.default, or Entra rejected the request.
+        '401':
+          description: Entra rejected the client ID or secret.
