@@ -22,6 +22,9 @@
         </choose>
         <set-header name="Ocp-Apim-Subscription-Key" exists-action="delete" />
         <set-header name="Authorization" exists-action="delete" />
+        <!-- Entra refuses client-credentials requests that carry a browser Origin (AADSTS9002326). -->
+        <set-header name="Origin" exists-action="delete" />
+        <set-header name="Referer" exists-action="delete" />
         <set-header name="Content-Type" exists-action="override">
             <value>application/x-www-form-urlencoded</value>
         </set-header>
