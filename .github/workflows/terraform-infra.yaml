@@ -7,6 +7,8 @@ on:
     paths:
       - "infrastructure/**/*.tf"
       - "infrastructure/**/*.tfvars"
+      - "infrastructure/**/*.xml"
+      - "infrastructure/**/*.yml"
       - "src/main/resources/openapi/**"
       - ".github/workflows/terraform-infra.yaml"
   pull_request:
@@ -15,6 +17,8 @@ on:
     paths:
       - "infrastructure/**/*.tf"
       - "infrastructure/**/*.tfvars"
+      - "infrastructure/**/*.xml"
+      - "infrastructure/**/*.yml"
       - "src/main/resources/openapi/**"
       - ".github/workflows/terraform-infra.yaml"
   workflow_dispatch:
