@@ -12,7 +12,7 @@ locals {
       name        = "Authorization"
       in          = "header"
       required    = true
-      description = "Entra access token for this API, as Bearer <access_token>."
+      description = "Bearer token from Get an Entra access token (sandbox)."
       schema      = { type = "string", default = "Bearer <access_token>" }
     },
     {
