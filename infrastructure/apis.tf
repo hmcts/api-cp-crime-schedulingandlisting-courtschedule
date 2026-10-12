@@ -3,6 +3,43 @@ locals {
     for api_key, api in var.apis :
     api_key => yamldecode(file(api.openapi_spec_path))
   }
+
+  # Declared only in the copy imported into APIM, so the portal's Try it shows them as
+  # pre-filled boxes. The spec itself is untouched: header parameters there would change
+  # the generated interface the service implements.
+  try_it_headers = [
+    {
+      name        = "Authorization"
+      in          = "header"
+      required    = true
+      description = "Bearer token from Get an Entra access token (sandbox)."
+      schema      = { type = "string", default = "Bearer <access_token>" }
+    },
+    {
+      name     = "Accept"
+      in       = "header"
+      required = false
+      schema   = { type = "string", default = "application/json" }
+    },
+  ]
+
+  http_methods = ["get", "put", "post", "delete", "patch", "head", "options"]
+
+  import_specs = {
+    for api_key, api in var.apis :
+    api_key => api.try_it_auth_headers ? yamlencode(merge(local.api_specs[api_key], {
+      paths = {
+        for path, item in local.api_specs[api_key].paths : path => merge(
+          { for key, value in item : key => value if !contains(local.http_methods, key) },
+          {
+            for method, operation in item : method => merge(operation, {
+              parameters = concat(try(operation.parameters, []), local.try_it_headers)
+            }) if contains(local.http_methods, method)
+          }
+        )
+      }
+    })) : file(api.openapi_spec_path)
+  }
 }
 
 module "apis" {
@@ -44,7 +81,7 @@ module "apis" {
   subscription_required = each.value.subscription_required
   api_type              = each.value.api_type
 
-  swagger_url    = file(each.value.openapi_spec_path)
+  swagger_url    = local.import_specs[each.key]
   content_format = "openapi"
 }
 

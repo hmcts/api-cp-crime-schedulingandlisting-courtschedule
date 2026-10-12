@@ -92,6 +92,8 @@ variable "apis" {
     api_type              = optional(string, "http")
     # Entra app roles on hmcts-api-marketplace accepted for this API; a token needs any one of them.
     required_roles = optional(list(string), ["app.read"])
+    # Adds Authorization and Accept header boxes to the portal's Try it (APIM import only).
+    try_it_auth_headers = optional(bool, false)
   }))
 
   validation {
