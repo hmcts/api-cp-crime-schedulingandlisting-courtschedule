@@ -11,6 +11,7 @@ HMCTS Shared Platform Services APIM instance.
 |---|---|
 | APIM Product | `cp-crime-schedulingandlisting` — subscription tier grouping APIs |
 | APIM API | `courtschedule` — registered from the OpenAPI spec at `src/main/resources/openapi/openapi-spec.yml` |
+| APIM API (sbox only) | `slc-entra-token` — *Get an Entra access token (sandbox)*: clients swap their own client ID and secret for a token in the developer portal, then use it to try the Court Schedule API. Created only when `entra_token_helper` is set (see `entra-token.tf`); its diagnostic logs no request or response bodies |
 
 The OpenAPI spec is the single source of truth — display name, path, and operations
 are all derived from it automatically.
