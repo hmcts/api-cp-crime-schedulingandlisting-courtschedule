@@ -2,14 +2,25 @@
     <inbound>
         <base />
         <!-- The caller supplies client_id, client_secret and optionally scope. The grant type is fixed. -->
+        <!-- A field sent without a value parses as null, so each one is read null-safely. -->
+        <set-variable name="clientId" value="@{
+            var form = context.Request.Body?.AsFormUrlEncodedContent(true);
+            return form != null &amp;&amp; form.ContainsKey(&quot;client_id&quot;) ? (form[&quot;client_id&quot;].FirstOrDefault() ?? &quot;&quot;).Trim() : &quot;&quot;;
+        }" />
+        <set-variable name="clientSecret" value="@{
+            var form = context.Request.Body?.AsFormUrlEncodedContent(true);
+            return form != null &amp;&amp; form.ContainsKey(&quot;client_secret&quot;) ? (form[&quot;client_secret&quot;].FirstOrDefault() ?? &quot;&quot;).Trim() : &quot;&quot;;
+        }" />
+        <set-variable name="scope" value="@{
+            var form = context.Request.Body?.AsFormUrlEncodedContent(true);
+            return form != null &amp;&amp; form.ContainsKey(&quot;scope&quot;) ? (form[&quot;scope&quot;].FirstOrDefault() ?? &quot;&quot;).Trim() : &quot;&quot;;
+        }" />
         <choose>
             <when condition="@{
-                var form = context.Request.Body.AsFormUrlEncodedContent(true);
-                if (form == null) { return true; }
-                var id = form.ContainsKey(&quot;client_id&quot;) ? form[&quot;client_id&quot;][0].Trim() : &quot;&quot;;
-                var secret = form.ContainsKey(&quot;client_secret&quot;) ? form[&quot;client_secret&quot;][0].Trim() : &quot;&quot;;
-                var scope = form.ContainsKey(&quot;scope&quot;) ? form[&quot;scope&quot;][0].Trim() : &quot;&quot;;
-                return id.Length == 0 || secret.Length == 0 || (scope.Length != 0 ? !scope.EndsWith(&quot;/.default&quot;) : false);
+                var scope = context.Variables.GetValueOrDefault&lt;string&gt;(&quot;scope&quot;, &quot;&quot;);
+                return context.Variables.GetValueOrDefault&lt;string&gt;(&quot;clientId&quot;, &quot;&quot;).Length == 0
+                    || context.Variables.GetValueOrDefault&lt;string&gt;(&quot;clientSecret&quot;, &quot;&quot;).Length == 0
+                    || (scope.Length != 0 &amp;&amp; !scope.EndsWith(&quot;/.default&quot;));
             }">
                 <return-response>
                     <set-status code="400" reason="Bad Request" />
@@ -29,12 +40,11 @@
             <value>application/x-www-form-urlencoded</value>
         </set-header>
         <set-body>@{
-            var form = context.Request.Body.AsFormUrlEncodedContent(true);
-            var scope = form.ContainsKey(&quot;scope&quot;) ? form[&quot;scope&quot;][0].Trim() : &quot;&quot;;
+            var scope = context.Variables.GetValueOrDefault&lt;string&gt;(&quot;scope&quot;, &quot;&quot;);
             if (scope.Length == 0) { scope = &quot;${default_scope}&quot;; }
             return &quot;grant_type=client_credentials&quot;
-                + &quot;&amp;client_id=&quot; + Uri.EscapeDataString(form[&quot;client_id&quot;][0].Trim())
-                + &quot;&amp;client_secret=&quot; + Uri.EscapeDataString(form[&quot;client_secret&quot;][0].Trim())
+                + &quot;&amp;client_id=&quot; + Uri.EscapeDataString(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;clientId&quot;))
+                + &quot;&amp;client_secret=&quot; + Uri.EscapeDataString(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;clientSecret&quot;))
                 + &quot;&amp;scope=&quot; + Uri.EscapeDataString(scope);
         }</set-body>
         <rate-limit-by-key calls="10" renewal-period="60" counter-key="@((context.Subscription?.Key ?? context.Request.IpAddress) + &quot;:entra-token&quot;)" />
