@@ -75,7 +75,7 @@ jobs:
           # Apply runs on push to main, or a manual "apply" on main. Everything else is plan-only.
           IS_APPLY: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event.inputs.overrideAction == 'apply') }}
           # Environments that need a reviewer's approval before apply (see the gated jobs below).
-          GATED_ENVS: "aat prod"
+          GATED_ENVS: "prod"
         run: |
           set -euo pipefail
 
