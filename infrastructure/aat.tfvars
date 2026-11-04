@@ -21,6 +21,6 @@ apis = {
     service_host      = "prpamp01-appgw.prp.lv.cjscp"
     service_path      = "/slc"
     revision          = "1"
-    required_roles    = ["slc.read", "app.read"]
+    required_roles    = ["app.read"]
   }
 }
