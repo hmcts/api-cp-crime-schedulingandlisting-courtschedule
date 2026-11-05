@@ -26,8 +26,3 @@ apis = {
     try_it_auth_headers = true
   }
 }
-
-# Lets clients get a token with their own credentials in the sandbox portal (see entra-token.tf).
-entra_token_helper = {
-  app_insights_logger_name = "sps-api-mgmt-sbox-logger"
-}
