@@ -77,6 +77,12 @@ variable "entra_client_id" {
   description = "Entra client ID (audience) used in the product JWT validation policy."
 }
 
+variable "additional_audiences" {
+  type        = list(string)
+  description = "Entra client IDs accepted as the token audience besides entra_client_id."
+  default     = []
+}
+
 variable "apis" {
   description = "Map of APIs to register in APIM. Details are sourced from the referenced OpenAPI spec file."
   type = map(object({
@@ -94,6 +100,11 @@ variable "apis" {
     required_roles = optional(list(string), ["app.read"])
     # Adds Authorization and Accept header boxes to the portal's Try it (APIM import only).
     try_it_auth_headers = optional(bool, false)
+    # Sandbox only. A JSON file of recorded scenarios (see sandbox/). When set, the API answers
+    # from them after the token check and never calls the backend.
+    scenarios_file = optional(string)
+    # Products the API joins besides apim_product, so their subscription keys work on it too.
+    additional_products = optional(list(string), [])
   }))
 
   validation {
@@ -107,6 +118,9 @@ variable "entra_token_helper" {
   type = object({
     # Application Insights logger whose body logging is switched off for that API.
     app_insights_logger_name = string
+    # Entra client ID whose /.default scope a token is for when the caller sends none.
+    # Defaults to entra_client_id.
+    default_scope_client_id = optional(string)
   })
   default = null
 }
