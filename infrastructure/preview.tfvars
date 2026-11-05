@@ -21,6 +21,6 @@ apis = {
     service_host      = "sitamp01-appgw.sit.nl.cjscp"
     service_path      = "/slc"
     revision          = "1"
-    required_roles    = ["slc.read", "app.read"]
+    required_roles    = ["app.read"]
   }
 }

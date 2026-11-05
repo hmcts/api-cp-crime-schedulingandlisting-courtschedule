@@ -21,7 +21,7 @@ apis = {
     service_host      = "devamp01-appgw.dev.nl.cjscp"
     service_path      = "/slc"
     revision          = "1"
-    required_roles    = ["slc.read", "app.read"]
+    required_roles    = ["app.read"]
     # Pre-filled Authorization and Accept boxes in the portal's Try it (see apis.tf).
     try_it_auth_headers = true
   }
