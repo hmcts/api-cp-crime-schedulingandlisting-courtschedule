@@ -1,14 +1,13 @@
 name: Infrastructure release
 
-# Applies release-gated environments (demo for now, prod later) when a GitHub Release is published.
-# Each apply waits for a reviewer on the matching GitHub environment.
 on:
-  release:
-    types: [ published ]
+  workflow_run:
+    workflows: [ "CI Build and Publish (RELEASE)" ]
+    types: [ completed ]
   workflow_dispatch:
 
 concurrency:
-  group: terraform-release-${{ github.ref }}
+  group: terraform-release
   cancel-in-progress: false
 
 permissions:
@@ -19,6 +18,7 @@ permissions:
 jobs:
   precheck:
     name: Terraform Precheck
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.event == 'release' && github.event.workflow_run.conclusion == 'success') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: demo
     steps:
-      - run: echo "demo apply of ${{ github.ref_name }} approved by ${{ github.actor }}"
+      - run: echo "demo apply for ${{ github.event.workflow_run.head_branch || github.ref_name }} approved by ${{ github.actor }}"
 
   terraform-demo:
     name: Terraform demo
