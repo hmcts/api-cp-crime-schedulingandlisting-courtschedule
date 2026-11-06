@@ -91,7 +91,6 @@ Each `*.tfvars` must have its own `entra_tenant_id` and `entra_client_id`. Get t
 | Environment | tfvars file | APIM name | RG | Tenant |
 |---|---|---|---|---|
 | sbox | `sbox.tfvars` | `sps-api-mgmt-sbox` | `rg-sps-platform-sbox` | `d44f885c-...` |
-| preview | `preview.tfvars` | `sps-api-mgmt-preview` | `rg-sps-platform-preview` | `d44f885c-...` (temp, update when confirmed) |
 | prod | `prod.tfvars` | `sps-api-mgmt-prod` | `rg-sps-platform-prod` | `77f54315-6dde-4fe7-9e17-74762c3eb096` |
 
 ## Policy
@@ -104,13 +103,13 @@ JWT auth, rate limiting (30/min), quota (500/day), and concurrency (max 10) are 
 
 If the environment doesn't have a tfvars file yet, creating one will trigger the workflow — but it will fail unless 3 GitHub repository variables exist for it.
 
-The workflow derives variable names from the tfvars filename (e.g. `preview.tfvars` → uppercase `PREVIEW`):
+The workflow derives variable names from the tfvars filename (e.g. `demo.tfvars` → uppercase `DEMO`):
 
-| GitHub Variable | Example for `preview` | Known value |
+| GitHub Variable | Example for `demo` | Known value |
 |---|---|---|
-| `AZURE_CLIENT_ID_{ENV}` | `AZURE_CLIENT_ID_PREVIEW` | from `azure-github-federation-config` |
-| `AZURE_SUBSCRIPTION_{ENV}` | `AZURE_SUBSCRIPTION_PREVIEW` | `DTS-SPS-PREVIEW` |
-| `AZURE_SUBSCRIPTION_ID_{ENV}` | `AZURE_SUBSCRIPTION_ID_PREVIEW` | `7cfd7e05-06a1-4d9b-a426-db304bc99aab` |
+| `AZURE_CLIENT_ID_{ENV}` | `AZURE_CLIENT_ID_DEMO` | from `azure-github-federation-config` |
+| `AZURE_SUBSCRIPTION_{ENV}` | `AZURE_SUBSCRIPTION_DEMO` | from the team |
+| `AZURE_SUBSCRIPTION_ID_{ENV}` | `AZURE_SUBSCRIPTION_ID_DEMO` | `058bf954-ac1f-462b-bca4-42a30314bd74` |
 
 Plus one shared variable (already set if sbox works):
 

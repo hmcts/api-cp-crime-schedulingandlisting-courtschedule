@@ -16,7 +16,7 @@ apim_product = {
 entra_tenant_id = "db827888-77df-4707-b3d9-24a3dfe32889"
 entra_client_id = "26b2922f-61a8-4cee-b4ba-d0d7aba215ad"
 
-# service_host is sit, the non-live network, as preview uses - a demo audience sees no live CP
+# service_host is sit, the non-live network - a demo audience sees no live CP
 # data. aat's prp backend is on the live network, which is why demo does not follow it here.
 apis = {
   courtschedule = {
