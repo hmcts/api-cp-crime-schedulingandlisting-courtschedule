@@ -31,9 +31,53 @@ jobs:
           recursive: true
 
 
+  # Fails the release if its OpenAPI spec breaks consumers of the previous release. The release tag
+  # and commit come from the triggering run: workflow_run itself always runs on main.
+  oasdiff:
+    name: Breaking change check
+    needs: [ precheck ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the released commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Check out the previous release
+        id: base
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.workflow_run.head_branch || github.ref_name }}
+        run: |
+          # Published releases, newest first. Take the one published just before this release.
+          prev=$(gh release list --exclude-drafts --exclude-pre-releases --limit 100 \
+            --json tagName,publishedAt \
+            -q 'sort_by(.publishedAt) | reverse | .[].tagName' \
+            | grep -A1 -x "${RELEASE_TAG}" | sed -n 2p)
+          if [ -z "$prev" ]; then
+            echo "No release before ${RELEASE_TAG}, nothing to compare"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Comparing ${RELEASE_TAG} with previous release ${prev}"
+          git worktree add base "$prev"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Fail on breaking changes
+        if: steps.base.outputs.skip == 'false'
+        uses: oasdiff/oasdiff-action/breaking@9e56cf8b3aff7edb326d5767d3d23f96127e20c3 # v0.1.21
+        with:
+          base: base/src/main/resources/openapi/openapi-spec.yml
+          revision: src/main/resources/openapi/openapi-spec.yml
+          fail-on: ERR
+          # Keep the specs in CI: no upload to oasdiff.com and no PR comment.
+          review: false
+          github-token: ""
+
   approve-demo:
     name: Approve demo apply
-    needs: [ precheck ]
+    needs: [ oasdiff ]
     runs-on: ubuntu-latest
     environment: demo
     steps:
