@@ -1,0 +1,59 @@
+name: Infrastructure release
+
+# Applies release-gated environments (demo for now, prod later) when a GitHub Release is published.
+# Each apply waits for a reviewer on the matching GitHub environment.
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+
+concurrency:
+  group: terraform-release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  precheck:
+    name: Terraform Precheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Terraform format check
+        uses: hmcts/cnp-githubactions-library/terraform-fmt@main
+        with:
+          working-directory: infrastructure
+          recursive: true
+
+
+  approve-demo:
+    name: Approve demo apply
+    needs: [ precheck ]
+    runs-on: ubuntu-latest
+    environment: demo
+    steps:
+      - run: echo "demo apply of ${{ github.ref_name }} approved by ${{ github.actor }}"
+
+  terraform-demo:
+    name: Terraform demo
+    needs: [ approve-demo ]
+    uses: hmcts/cnp-githubactions-library/.github/workflows/terraform-deploy-openId.yaml@main
+    with:
+      environment: demo
+      subscription: ${{ vars.AZURE_SUBSCRIPTION_DEMO }}
+      aks-subscription: ${{ vars.AZURE_SUBSCRIPTION_DEMO }}
+      storage-account: ${{ vars.TFSTATE_STORAGE_ACCOUNT_NONPROD }}
+      azure-client-id: ${{ vars.AZURE_CLIENT_ID_DEMO }}
+      azure-subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID_DEMO }}
+      state-store-resource-group: rg-sps-platform-demo
+      state-store-account-name: spsapimapidemostate
+      state-store-container-name: terraform-state
+      state-store-use-entra-id-auth: true
+      working-directory: infrastructure
+      plan-only: false
+      product: cp-crime-schedulingandlisting
+      post-plan-to-pr: false
