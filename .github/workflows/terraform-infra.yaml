@@ -75,6 +75,9 @@ jobs:
           IS_APPLY: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event.inputs.overrideAction == 'apply') }}
           # Environments that need a reviewer's approval before apply (see the gated jobs below).
           GATED_ENVS: "prod"
+          # Environments applied only on a published release, behind approval (terraform-release.yaml).
+          # They are still planned on pull requests.
+          RELEASE_ENVS: "demo"
         run: |
           set -euo pipefail
 
@@ -96,6 +99,10 @@ jobs:
               case "$env_name" in
                 prod) apply_prod="true" ;;
               esac
+              continue
+            fi
+
+            if [ "$IS_APPLY" = "true" ] && [[ " $RELEASE_ENVS " == *" $env_name "* ]]; then
               continue
             fi
 
