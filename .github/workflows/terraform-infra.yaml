@@ -78,6 +78,8 @@ jobs:
           # Environments applied only on a published release, behind approval (terraform-release.yaml).
           # They are still planned on pull requests.
           RELEASE_ENVS: "demo"
+          # Environments left out entirely for now: no plan, no apply, no approval.
+          SKIP_ENVS: "prod"
         run: |
           set -euo pipefail
 
@@ -93,6 +95,10 @@ jobs:
             env_name="${file%.tfvars}"
             env_name="${env_name#infrastructure/}"
             env_upper="$(echo "$env_name" | tr '[:lower:]-' '[:upper:]_')"
+
+            if [[ " $SKIP_ENVS " == *" $env_name "* ]]; then
+              continue
+            fi
 
             # On apply, gated environments are deployed by their own approval-gated jobs.
             if [ "$IS_APPLY" = "true" ] && [[ " $GATED_ENVS " == *" $env_name "* ]]; then
