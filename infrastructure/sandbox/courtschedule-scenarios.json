@@ -1,0 +1,147 @@
+{
+  "parameter": "case_urn",
+  "unmatched": "TIN-NOTFOUND-01",
+  "scenarios": [
+    {
+      "value": "TIN-ALLOCATED-01",
+      "status": 200,
+      "summary": "Allocated hearing — one sitting with a court room, judge and start/end times.",
+      "body": {
+        "courtSchedule": [
+          {
+            "hearings": [
+              {
+                "hearingId": "HRG-123410",
+                "hearingType": "Trial",
+                "hearingDescription": "Trial of theft case",
+                "listNote": "Requires interpreter",
+                "courtSittings": [
+                  {
+                    "sittingStart": "2026-03-18T09:00:00Z",
+                    "sittingEnd": "2026-03-18T12:00:00Z",
+                    "judiciaryId": "123e4567-e89b-12d3-a456-426614174000",
+                    "courtHouse": "223e4567-e89b-12d3-a456-426614174111",
+                    "courtRoom": "b7a9cb95-4f7c-4aba-b9a2-8cb1ad3330b2"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "value": "TIN-WEEKCOMM-01",
+      "status": 200,
+      "summary": "Unallocated hearing — empty courtSittings with a weekCommencing block. Valid, not a fault.",
+      "body": {
+        "courtSchedule": [
+          {
+            "hearings": [
+              {
+                "hearingId": "HRG-123906",
+                "hearingType": "Trial",
+                "hearingDescription": "Trial not yet allocated to a sitting",
+                "listNote": "Requires interpreter",
+                "courtSittings": [],
+                "weekCommencing": {
+                  "startDate": "2026-02-16",
+                  "endDate": "2026-02-22",
+                  "durationInWeeks": 1,
+                  "courtHouse": "223e4567-e89b-12d3-a456-426614174111"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "value": "TIN-MULTI-01",
+      "status": 200,
+      "summary": "Two hearings on one case, mixing an allocated sitting and a week-commencing listing.",
+      "body": {
+        "courtSchedule": [
+          {
+            "hearings": [
+              {
+                "hearingId": "HRG-200001",
+                "hearingType": "Preliminary",
+                "hearingDescription": "First hearing",
+                "listNote": "No special requirements",
+                "courtSittings": [
+                  {
+                    "sittingStart": "2026-04-07T10:00:00Z",
+                    "sittingEnd": "2026-04-07T11:30:00Z",
+                    "judiciaryId": "123e4567-e89b-12d3-a456-426614174000",
+                    "courtHouse": "223e4567-e89b-12d3-a456-426614174111",
+                    "courtRoom": "b7a9cb95-4f7c-4aba-b9a2-8cb1ad3330b2"
+                  }
+                ]
+              },
+              {
+                "hearingId": "HRG-200002",
+                "hearingType": "Sentencing",
+                "hearingDescription": "Sentencing following conviction",
+                "listNote": "Pre-sentence report required",
+                "courtSittings": [],
+                "weekCommencing": {
+                  "startDate": "2026-05-11",
+                  "endDate": "2026-05-17",
+                  "durationInWeeks": 1,
+                  "courtHouse": "223e4567-e89b-12d3-a456-426614174111"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "value": "TIN-EMPTY-01",
+      "status": 200,
+      "summary": "Case exists but has no hearings listed — an empty courtSchedule array, still a 200.",
+      "body": {
+        "courtSchedule": []
+      }
+    },
+    {
+      "value": "TIN-NOTFOUND-01",
+      "status": 404,
+      "summary": "Case URN has no schedule. Any unrecognised URN answers this way too.",
+      "body": {
+        "error": "not_found",
+        "message": "No court schedule exists for the supplied case URN.",
+        "details": {},
+        "timestamp": "2026-01-01T00:00:00Z",
+        "traceId": "00000000-0000-0000-0000-000000000000"
+      }
+    },
+    {
+      "value": "TIN-BADREQUEST-01",
+      "status": 400,
+      "summary": "Malformed case URN rejected by the API.",
+      "body": {
+        "error": "invalid_request",
+        "message": "The supplied case URN is not in a recognised format.",
+        "details": {
+          "parameter": "case_urn"
+        },
+        "timestamp": "2026-01-01T00:00:00Z",
+        "traceId": "00000000-0000-0000-0000-000000000000"
+      }
+    },
+    {
+      "value": "TIN-SERVERERROR-01",
+      "status": 500,
+      "summary": "Backend failure, so a consumer can exercise its own 5xx retry handling.",
+      "body": {
+        "error": "internal_server_error",
+        "message": "Simulated backend failure. A real 500 would not say this.",
+        "details": {},
+        "timestamp": "2026-01-01T00:00:00Z",
+        "traceId": "00000000-0000-0000-0000-000000000000"
+      }
+    }
+  ]
+}

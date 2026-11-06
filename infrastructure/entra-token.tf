@@ -53,7 +53,7 @@ resource "azurerm_api_management_api_policy" "entra_token" {
   resource_group_name = var.api_mgmt_rg
 
   xml_content = templatefile("${path.module}/policies/entra-token-policy.xml", {
-    default_scope = "${var.entra_client_id}/.default"
+    default_scope = "${coalesce(var.entra_token_helper.default_scope_client_id, var.entra_client_id)}/.default"
   })
 }
 
