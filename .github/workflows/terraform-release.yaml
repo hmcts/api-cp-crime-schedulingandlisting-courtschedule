@@ -1,5 +1,4 @@
 name: Infrastructure release
-
 on:
   workflow_run:
     workflows: [ "CI Build and Publish (RELEASE)" ]
@@ -30,28 +29,19 @@ jobs:
           working-directory: infrastructure
           recursive: true
 
-
-  approve-demo:
-    name: Approve demo apply
+  terraform-prod:
+    name: Terraform prod
     needs: [ precheck ]
-    runs-on: ubuntu-latest
-    environment: demo
-    steps:
-      - run: echo "demo apply for ${{ github.event.workflow_run.head_branch || github.ref_name }} approved by ${{ github.actor }}"
-
-  terraform-demo:
-    name: Terraform demo
-    needs: [ approve-demo ]
     uses: hmcts/cnp-githubactions-library/.github/workflows/terraform-deploy-openId.yaml@main
     with:
-      environment: demo
-      subscription: ${{ vars.AZURE_SUBSCRIPTION_DEMO }}
-      aks-subscription: ${{ vars.AZURE_SUBSCRIPTION_DEMO }}
-      storage-account: ${{ vars.TFSTATE_STORAGE_ACCOUNT_NONPROD }}
-      azure-client-id: ${{ vars.AZURE_CLIENT_ID_DEMO }}
-      azure-subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID_DEMO }}
-      state-store-resource-group: rg-sps-platform-demo
-      state-store-account-name: spsapimapidemostate
+      environment: prod
+      subscription: ${{ vars.AZURE_SUBSCRIPTION_PROD }}
+      aks-subscription: ${{ vars.AZURE_SUBSCRIPTION_PROD }}
+      storage-account: ${{ vars.TFSTATE_STORAGE_ACCOUNT_PROD }}
+      azure-client-id: ${{ vars.AZURE_CLIENT_ID_PROD }}
+      azure-subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID_PROD }}
+      state-store-resource-group: rg-sps-platform-prod
+      state-store-account-name: spsapimapiprodstate
       state-store-container-name: terraform-state
       state-store-use-entra-id-auth: true
       working-directory: infrastructure
