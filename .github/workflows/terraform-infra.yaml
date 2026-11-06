@@ -55,6 +55,45 @@ jobs:
           working-directory: infrastructure
           recursive: true
 
+  # Fails the run if the OpenAPI spec breaks consumers of the latest published release.
+  # Nothing to compare before the first release.
+  oasdiff:
+    name: Breaking change check
+    needs: [ precheck ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check out the latest release
+        id: base
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          latest=$(gh release list --exclude-drafts --exclude-pre-releases --limit 1 \
+            --json tagName -q '.[0].tagName')
+          if [ -z "$latest" ]; then
+            echo "No published release, nothing to compare"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Comparing this spec with the latest release ${latest}"
+          git worktree add base "$latest"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Fail on breaking changes
+        if: steps.base.outputs.skip == 'false'
+        uses: oasdiff/oasdiff-action/breaking@9e56cf8b3aff7edb326d5767d3d23f96127e20c3 # v0.1.21
+        with:
+          base: base/src/main/resources/openapi/openapi-spec.yml
+          revision: src/main/resources/openapi/openapi-spec.yml
+          fail-on: ERR
+          # Keep the specs in CI: no upload to oasdiff.com and no PR comment.
+          review: false
+          github-token: ""
+
   discover-environments:
     name: Discover tfvars environments
     needs: precheck
@@ -62,7 +101,8 @@ jobs:
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
       has_envs: ${{ steps.matrix.outputs.has_envs }}
-      apply_prod: ${{ steps.matrix.outputs.apply_prod }}
+      sandbox_matrix: ${{ steps.matrix.outputs.sandbox_matrix }}
+      has_sandbox: ${{ steps.matrix.outputs.has_sandbox }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -71,21 +111,17 @@ jobs:
         id: matrix
         shell: bash
         env:
-          # Apply runs on push to main, or a manual "apply" on main. Everything else is plan-only.
-          IS_APPLY: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event.inputs.overrideAction == 'apply') }}
-          # Environments that need a reviewer's approval before apply (see the gated jobs below).
-          GATED_ENVS: "prod"
-          # Environments applied only on a published release, behind approval (terraform-release.yaml).
-          # They are still planned on pull requests.
-          RELEASE_ENVS: "demo"
-          # Environments left out entirely for now: no plan, no apply, no approval.
+          # prod is applied by terraform-release.yaml when a release is published, not here.
           SKIP_ENVS: "prod"
+          # Environments gated by the breaking change check (the oasdiff job); everything else is not.
+          SANDBOX_ENVS: "sbox"
         run: |
           set -euo pipefail
 
           matrix='[]'
           found="false"
-          apply_prod="false"
+          sandbox_matrix='[]'
+          has_sandbox="false"
 
           for file in infrastructure/*.tfvars; do
             if [ ! -f "$file" ]; then
@@ -100,23 +136,7 @@ jobs:
               continue
             fi
 
-            # On apply, gated environments are deployed by their own approval-gated jobs.
-            if [ "$IS_APPLY" = "true" ] && [[ " $GATED_ENVS " == *" $env_name "* ]]; then
-              case "$env_name" in
-                prod) apply_prod="true" ;;
-              esac
-              continue
-            fi
-
-            if [ "$IS_APPLY" = "true" ] && [[ " $RELEASE_ENVS " == *" $env_name "* ]]; then
-              continue
-            fi
-
-            if [ "$env_name" = "prod" ]; then
-              storage_var="TFSTATE_STORAGE_ACCOUNT_PROD"
-            else
-              storage_var="TFSTATE_STORAGE_ACCOUNT_NONPROD"
-            fi
+            storage_var="TFSTATE_STORAGE_ACCOUNT_NONPROD"
 
             item="$(jq -nc \
               --arg environment "$env_name" \
@@ -132,13 +152,19 @@ jobs:
                 azure_subscription_id_var: $azure_subscription_id_var
               }')"
 
-            matrix="$(jq -nc --argjson m "$matrix" --argjson i "$item" '$m + [$i]')"
-            found="true"
+            if [[ " $SANDBOX_ENVS " == *" $env_name "* ]]; then
+              sandbox_matrix="$(jq -nc --argjson m "$sandbox_matrix" --argjson i "$item" '$m + [$i]')"
+              has_sandbox="true"
+            else
+              matrix="$(jq -nc --argjson m "$matrix" --argjson i "$item" '$m + [$i]')"
+              found="true"
+            fi
           done
 
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           echo "has_envs=$found" >> "$GITHUB_OUTPUT"
-          echo "apply_prod=$apply_prod" >> "$GITHUB_OUTPUT"
+          echo "sandbox_matrix=$sandbox_matrix" >> "$GITHUB_OUTPUT"
+          echo "has_sandbox=$has_sandbox" >> "$GITHUB_OUTPUT"
 
   terraform:
     name: Terraform ${{ matrix.environment }}
@@ -170,37 +196,33 @@ jobs:
       product: cp-crime-schedulingandlisting
       post-plan-to-pr: true
 
-  # ── Approval-gated apply (prod only) ───────────────────────────────────────
-  # The approval lives in its own job: a job calling a reusable workflow cannot set
-  # `environment:`, and running the Azure login inside a GitHub environment would change
-  # the OIDC subject to `environment:<name>`, which the DTS AMp federated credentials
-  # do not trust. Reviewers are configured on the `prod` GitHub environment.
-  # prod is only offered for approval once every other environment has applied successfully.
-  approve-prod:
-    name: Approve prod apply
-    needs: [ discover-environments, terraform ]
-    if: ${{ needs['discover-environments'].outputs.apply_prod == 'true' && needs.terraform.result == 'success' }}
-    runs-on: ubuntu-latest
-    environment: prod
-    steps:
-      - run: echo "prod apply approved by ${{ github.actor }}"
+  # Same as terraform, but only for the sandbox and only after the breaking change check passes.
+  terraform-sandbox:
+    name: Terraform ${{ matrix.environment }}
+    needs: [ discover-environments, oasdiff ]
+    if: ${{ needs['discover-environments'].outputs.has_sandbox == 'true' && (
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.overrideAction == 'plan' || github.ref ==
+      'refs/heads/main' ) }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs['discover-environments'].outputs.sandbox_matrix) }}
 
-  terraform-prod:
-    name: Terraform prod
-    needs: [ approve-prod ]
     uses: hmcts/cnp-githubactions-library/.github/workflows/terraform-deploy-openId.yaml@main
     with:
-      environment: prod
-      subscription: ${{ vars.AZURE_SUBSCRIPTION_PROD }}
-      aks-subscription: ${{ vars.AZURE_SUBSCRIPTION_PROD }}
-      storage-account: ${{ vars.TFSTATE_STORAGE_ACCOUNT_PROD }}
-      azure-client-id: ${{ vars.AZURE_CLIENT_ID_PROD }}
-      azure-subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID_PROD }}
-      state-store-resource-group: rg-sps-platform-prod
-      state-store-account-name: spsapimapiprodstate
+      environment: ${{ matrix.environment }}
+      subscription: ${{ vars[matrix.subscription_var] }}
+      aks-subscription: ${{ vars[matrix.subscription_var] }}
+      storage-account: ${{ vars[matrix.storage_account_var] }}
+      azure-client-id: ${{ vars[matrix.azure_client_id_var] }}
+      azure-subscription-id: ${{ vars[matrix.azure_subscription_id_var] }}
+      state-store-resource-group: rg-sps-platform-${{ matrix.environment }}
+      state-store-account-name: spsapimapi${{matrix.environment}}state
       state-store-container-name: terraform-state
       state-store-use-entra-id-auth: true
       working-directory: infrastructure
-      plan-only: false
+      plan-only: ${{ github.event_name == 'pull_request' || (github.event_name ==
+        'workflow_dispatch' && github.event.inputs.overrideAction == 'plan') }}
       product: cp-crime-schedulingandlisting
       post-plan-to-pr: true
