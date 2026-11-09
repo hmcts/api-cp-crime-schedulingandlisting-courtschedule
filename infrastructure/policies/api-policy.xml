@@ -2,23 +2,29 @@
     <inbound>
         <choose>
             <when condition="@(context.Request.Headers.ContainsKey(&quot;Authorization&quot;))">
-                <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Your JWT token failed CNP validation! ">
+                <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Your JWT token failed CNP validation! "%{ if length(scenarios) > 0 } output-token-variable-name="jwt"%{ endif }>
                     <openid-config url="https://login.microsoftonline.com/${tenant_id}/v2.0/.well-known/openid-configuration" />
                     <audiences>
-                        <audience>${client_id}</audience>
+%{ for audience in audiences ~}
+                        <audience>${audience}</audience>
+%{ endfor ~}
                     </audiences>
                     <issuers>
                         <issuer>https://login.microsoftonline.com/${tenant_id}/v2.0</issuer>
                     </issuers>
                     <required-claims>
                         <claim name="aud" match="any">
-                            <value>${client_id}</value>
+%{ for audience in audiences ~}
+                            <value>${audience}</value>
+%{ endfor ~}
                         </claim>
+%{ if length(scenarios) == 0 ~}
                         <claim name="roles" match="any">
 %{ for role in required_roles ~}
                             <value>${role}</value>
 %{ endfor ~}
                         </claim>
+%{ endif ~}
                     </required-claims>
                 </validate-jwt>
             </when>
@@ -32,9 +38,50 @@
                 </return-response>
             </otherwise>
         </choose>
+%{ if length(scenarios) > 0 ~}
+        <choose>
+            <when condition="@(!((Jwt)context.Variables[&quot;jwt&quot;]).Claims.GetValueOrDefault(&quot;roles&quot;, new string[0]).Any(role => %{ for i, role in required_roles }%{ if i > 0 } || %{ endif }role == &quot;${role}&quot;%{ endfor }))">
+                <return-response>
+                    <set-status code="403" reason="Forbidden" />
+                    <set-header name="WWW-Authenticate" exists-action="override">
+                        <value>Bearer error="insufficient_scope"</value>
+                    </set-header>
+                    <set-header name="Content-Type" exists-action="override">
+                        <value>application/json</value>
+                    </set-header>
+                    <set-body>{"error":"insufficient_scope","message":"The token is valid but does not carry a role for this API."}</set-body>
+                </return-response>
+            </when>
+        </choose>
+%{ endif ~}
         <rate-limit-by-key calls="30" renewal-period="60" counter-key="@((context.Subscription?.Key ?? context.Request.IpAddress) + &quot;:slc&quot;)" />
         <quota-by-key calls="500" renewal-period="86400" counter-key="@((context.Subscription?.Key ?? context.Request.IpAddress) + &quot;:slc&quot;)" />
         <base />
+%{ if length(scenarios) > 0 ~}
+        <set-variable name="scenario" value="@(context.Request.MatchedParameters.GetValueOrDefault(&quot;${parameter}&quot;, &quot;&quot;).ToUpperInvariant())" />
+        <choose>
+%{ for scenario in scenarios ~}
+            <when condition="@((string)context.Variables[&quot;scenario&quot;] == &quot;${upper(scenario.value)}&quot;)">
+                <return-response>
+                    <set-status code="${scenario.status}" />
+                    <set-header name="Content-Type" exists-action="override">
+                        <value>application/json</value>
+                    </set-header>
+                    <set-body>${jsonencode(scenario.body)}</set-body>
+                </return-response>
+            </when>
+%{ endfor ~}
+            <otherwise>
+                <return-response>
+                    <set-status code="${unmatched.status}" />
+                    <set-header name="Content-Type" exists-action="override">
+                        <value>application/json</value>
+                    </set-header>
+                    <set-body>${jsonencode(unmatched.body)}</set-body>
+                </return-response>
+            </otherwise>
+        </choose>
+%{ endif ~}
     </inbound>
     <backend>
         <limit-concurrency key="@((context.Subscription?.Key ?? context.Request.IpAddress) + &quot;:slc&quot;)" max-count="10">
