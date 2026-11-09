@@ -40,7 +40,7 @@ paths:
                 scope:
                   type: string
                   description: Must end in /.default. Defaults to the Court Schedule API.
-            example: client_id=<your-client-id>&client_secret=<your-client-secret>&scope=30288840-e345-4543-99ee-f9253d789339/.default
+            example: client_id=<your-client-id>&client_secret=<your-client-secret>&scope=c4c8974c-2800-4fe6-964f-dcd4c0820507/.default
       responses:
         '200':
           description: The access token, issued by Entra.

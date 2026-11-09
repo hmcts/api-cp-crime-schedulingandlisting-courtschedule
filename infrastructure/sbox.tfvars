@@ -11,7 +11,8 @@ apim_product = {
 }
 
 entra_tenant_id = "d44f885c-4fac-47bf-afde-d7d861ec4d7b"
-entra_client_id = "30288840-e345-4543-99ee-f9253d789339"
+# Marketplace per-API resource app for SLC (AMP-1103); consumers are granted app.read on it
+entra_client_id = "c4c8974c-2800-4fe6-964f-dcd4c0820507"
 
 apis = {
   courtschedule = {
