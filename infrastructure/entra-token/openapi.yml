@@ -6,30 +6,49 @@ info:
     try the Court Schedule API in this portal with your own app registration.
 
     1. Select **Try it** on the operation below.
-    2. Replace the request body's `client_id` and `client_secret` with your app's
-       values. No subscription key is needed. Leave `scope` as it is to get a token
-       for the Court Schedule API.
+    2. Put your app registration's values in the `X-Client-Id` and `X-Client-Secret`
+       boxes. No subscription key is needed. Leave `X-Scope` empty for a Court Schedule
+       token.
     3. Send, and copy `access_token` from the response.
     4. On the [Court Schedule API](https://amp-portal.sandbox.api.hmcts.net/api-details#api=common-platform-api-scheduling-and-listing-court-schedule&operation=getCourtScheduleByCaseUrn),
        select **Try it** and add the header `Authorization: Bearer <access_token>`.
 
-    Your secret is passed straight to Entra and is not logged. Outside the portal, call
-    the Entra token endpoint directly instead.
+    Your secret goes straight to Entra and is not logged. Outside the portal, call the
+    Entra token endpoint directly instead.
   version: 1.0.0
 paths:
   /token:
     post:
       operationId: getEntraToken
       summary: Get an access token with your client credentials
+      parameters:
+        - name: X-Client-Id
+          in: header
+          required: true
+          description: Your app registration's client ID.
+          schema:
+            type: string
+            default: "<your-client-id>"
+        - name: X-Client-Secret
+          in: header
+          required: true
+          description: A client secret for that app registration.
+          schema:
+            type: string
+            default: "<your-client-secret>"
+        - name: X-Scope
+          in: header
+          required: false
+          description: Must end in /.default. Defaults to the Court Schedule API.
+          schema:
+            type: string
       requestBody:
-        required: true
+        # For callers outside the portal. A header wins over the matching field.
+        required: false
         content:
           application/x-www-form-urlencoded:
             schema:
               type: object
-              required:
-                - client_id
-                - client_secret
               properties:
                 client_id:
                   type: string
