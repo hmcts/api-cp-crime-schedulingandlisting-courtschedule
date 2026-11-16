@@ -1,6 +1,13 @@
 <policies>
     <inbound>
         <choose>
+%{ if sandbox != null ~}
+            <!-- Sandbox product (AMP Try It Now): its product policy validates the sandbox token.
+                 The backend is set here too, so a sandbox key can never reach this API's backend. -->
+            <when condition="@(context.Product != null &amp;&amp; context.Product.Id == &quot;${sandbox.product_id}&quot;)">
+                <set-backend-service base-url="${sandbox.backend_url}" />
+            </when>
+%{ endif ~}
             <when condition="@(context.Request.Headers.ContainsKey(&quot;Authorization&quot;))">
                 <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Your JWT token failed CNP validation! ">
                     <openid-config url="https://login.microsoftonline.com/${tenant_id}/v2.0/.well-known/openid-configuration" />

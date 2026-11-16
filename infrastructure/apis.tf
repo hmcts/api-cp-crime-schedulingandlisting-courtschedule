@@ -98,6 +98,7 @@ resource "azurerm_api_management_api_policy" "api_policy" {
     tenant_id      = var.entra_tenant_id
     client_id      = var.entra_client_id
     required_roles = each.value.required_roles
+    sandbox        = var.sandbox
   })
 
   depends_on = [module.apis]

@@ -31,3 +31,9 @@ apis = {
 entra_token_helper = {
   app_insights_logger_name = "sps-api-mgmt-sbox-logger"
 }
+
+# AMP Try It Now sandbox product on this API (created by amp-try-it-now/apim).
+sandbox = {
+  product_id  = "cp-crime-schedulingandlisting-sandbox"
+  backend_url = "https://amp-try-it-now.sandbox.platform.hmcts.net/slc"
+}

@@ -110,3 +110,12 @@ variable "entra_token_helper" {
   })
   default = null
 }
+
+variable "sandbox" {
+  description = "Sandbox only. AMP Try It Now sandbox product attached to this API: calls with its key skip this policy's token check (the product policy validates instead) and go to backend_url. Leave unset in every other environment."
+  type = object({
+    product_id  = string
+    backend_url = string
+  })
+  default = null
+}
