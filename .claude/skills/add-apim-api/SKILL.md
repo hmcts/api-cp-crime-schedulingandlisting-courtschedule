@@ -99,6 +99,12 @@ No changes needed to `policies/api-policy.xml`, `apis.tf`, `products.tf`, or `va
 
 JWT auth, rate limiting (30/min), quota (500/day), and concurrency (max 10) are applied automatically at the API level via `azurerm_api_management_api_policy` in `apis.tf`, templated with the Entra IDs from tfvars.
 
+Statement order in `<inbound>` is load-bearing, and `ApiPolicyTest` enforces it:
+
+1. `<base />` first. The `choose`/`otherwise` ends an unauthenticated request with `return-response`, which aborts the pipeline — anything below it, including the global policy, never runs.
+2. `rate-limit-by-key` before the `choose`, so calls rejected for failed auth are still counted against the subscriber.
+3. `quota-by-key` after the `choose`, so the daily allowance meters real usage rather than being burnable with an expired token.
+
 ## Adding a New Environment (new `*.tfvars`)
 
 If the environment doesn't have a tfvars file yet, creating one will trigger the workflow — but it will fail unless 3 GitHub repository variables exist for it.
