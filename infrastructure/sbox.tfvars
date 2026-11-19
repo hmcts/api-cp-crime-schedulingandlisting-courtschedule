@@ -1,6 +1,11 @@
 api_mgmt_rg   = "rg-sps-platform-sbox"
 api_mgmt_name = "sps-api-mgmt-sbox"
 
+# Consumer subscription keys (subscriptions.tf). This repo owns the shared amp-subscriptions
+# APIM user for sps-api-mgmt-sbox; other API repos look it up instead of creating it.
+subscription_key_vault_name = "kvspsplatformsbox"
+create_subscription_user    = true
+
 apim_product = {
   name                          = "cp-crime-schedulingandlisting"
   subscription_required         = true
@@ -24,6 +29,8 @@ apis = {
     required_roles    = ["app.read"]
     # Pre-filled Authorization and Accept boxes in the portal's Try it (see apis.tf).
     try_it_auth_headers = true
+    # One API-scoped subscription per consumer, key stored in kvspsplatformsbox.
+    consumers = ["amp-test-external-client"]
   }
 }
 
