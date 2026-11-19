@@ -11,10 +11,9 @@ apim_product = {
 }
 
 # Demo is external-entra-id's stg tenant, the one aat also uses, so the tenant and the
-# hmcts-api-marketplace resource app are the same pair aat names. Both are read from that tenant's
 # own apply output rather than copied across from aat.tfvars.
 entra_tenant_id = "db827888-77df-4707-b3d9-24a3dfe32889"
-entra_client_id = "26b2922f-61a8-4cee-b4ba-d0d7aba215ad"
+entra_client_id = "d6b20cca-b3dd-4232-9568-6d1313726bfa"
 
 # service_host is sit, the non-live network - a demo audience sees no live CP
 # data. aat's prp backend is on the live network, which is why demo does not follow it here.
