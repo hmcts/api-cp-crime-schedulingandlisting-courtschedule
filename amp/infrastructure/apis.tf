@@ -111,6 +111,8 @@ resource "azurerm_api_management_api_policy" "api_policy" {
     cp_tenant_id            = try(var.cp_token_exchange.tenant_id, "")
     cp_audience             = try(var.cp_token_exchange.audience, "")
     cp_identity_client_id   = try(data.azurerm_user_assigned_identity.cp_token_exchange[0].client_id, "")
+    cp_client_map           = try(var.cp_token_exchange.client_map, {})
+    cp_reject_unmapped      = try(var.cp_token_exchange.reject_unmapped, true)
     cp_cache_buffer_seconds = try(var.cp_token_exchange.cache_buffer_seconds, 300)
   })
 

@@ -47,4 +47,8 @@ cp_token_exchange = {
   audience                = "b69a4519-354b-481b-88a5-65ab7c83273e" # spn_amp_api_slc_publisher (mdv)
   identity_name           = "sps-api-mgmt-token-exchange-sbox"
   identity_resource_group = "rg-sps-platform-sbox"
+  # "<external consumer client ID>" = "<CP-access app client ID>". Added per consumer (C4).
+  client_map = {}
+  # Unmapped consumers are forwarded unchanged until the POC tests 403 (test 3).
+  reject_unmapped = false
 }
