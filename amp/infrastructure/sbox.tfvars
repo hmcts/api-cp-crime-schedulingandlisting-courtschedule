@@ -20,7 +20,7 @@ entra_client_id = "62c634e3-f807-44a1-9c95-8ec7460cf514"
 
 apis = {
   courtschedule = {
-    openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
+    openapi_spec_path = "../../src/main/resources/openapi/openapi-spec.yml"
     display_name      = "Crime Scheduling and Listing Schedule API (slc)"
     path              = "amp/slc"
     service_host      = "ccp-marketplace.dev.nl.cjscp"

@@ -46,7 +46,7 @@ Add this block inside `apis = {` in each environment's `*.tfvars`:
 
 ```hcl
   {map-key} = {
-    openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
+    openapi_spec_path = "../../src/main/resources/openapi/openapi-spec.yml"
     display_name      = "Crime X and Y Z API ({shortname})"
     path              = "amp/{shortname}"
     service_host      = "{hostname-without-.org.uk}"
@@ -58,7 +58,7 @@ Add this block inside `apis = {` in each environment's `*.tfvars`:
 ### sbox example (for reference)
 ```hcl
   courtschedule = {
-    openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
+    openapi_spec_path = "../../src/main/resources/openapi/openapi-spec.yml"
     display_name      = "Crime Scheduling and Listing Schedule API (slc)"
     path              = "amp/slc"
     service_host      = "devamp01-appgw.dev.nl.cjscp"

@@ -19,7 +19,7 @@ entra_client_id = "d6b20cca-b3dd-4232-9568-6d1313726bfa"
 # data. aat's prp backend is on the live network, which is why demo does not follow it here.
 apis = {
   courtschedule = {
-    openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
+    openapi_spec_path = "../../src/main/resources/openapi/openapi-spec.yml"
     display_name      = "Crime Scheduling and Listing Schedule API (slc)"
     path              = "amp/slc"
     service_host      = "sitamp01-appgw.sit.nl.cjscp"

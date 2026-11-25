@@ -15,7 +15,7 @@ entra_client_id = "19cdaed5-deb7-4e62-ac00-596fccee972d"
 
 apis = {
   courtschedule = {
-    openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
+    openapi_spec_path = "../../src/main/resources/openapi/openapi-spec.yml"
     display_name      = "Crime Scheduling and Listing Schedule API (slc)"
     path              = "amp/slc"
     service_host      = "prdamp01-appgw.prd.lv.cjscp"
