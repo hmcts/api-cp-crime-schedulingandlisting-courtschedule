@@ -1,5 +1,5 @@
-api_mgmt_rg   = "rg-sps-platform-aat"
-api_mgmt_name = "sps-api-mgmt-aat"
+api_mgmt_rg   = "rg-sps-platform-prod"
+api_mgmt_name = "sps-api-mgmt-prod"
 
 apim_product = {
   name                          = "cp-crime-schedulingandlisting"
@@ -10,17 +10,20 @@ apim_product = {
   product_access_control_groups = ["developers", "administrators", "guests"]
 }
 
-entra_tenant_id = "db827888-77df-4707-b3d9-24a3dfe32889"
-entra_client_id = "26b2922f-61a8-4cee-b4ba-d0d7aba215ad"
+entra_tenant_id = "0d0315f6-3c04-4edb-ac37-b05f580cc122"
+entra_client_id = "19cdaed5-deb7-4e62-ac00-596fccee972d"
 
 apis = {
   courtschedule = {
-    openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
+    openapi_spec_path = "../../src/main/resources/openapi/openapi-spec.yml"
     display_name      = "Crime Scheduling and Listing Schedule API (slc)"
     path              = "amp/slc"
-    service_host      = "prpamp01-appgw.prp.lv.cjscp"
+    service_host      = "prdamp01-appgw.prd.lv.cjscp"
     service_path      = "/slc"
     revision          = "1"
     required_roles    = ["app.read"]
   }
 }
+
+# CP token exchange is off here until the APIM identity and CP-access apps exist for this environment.
+cp_token_exchange = null

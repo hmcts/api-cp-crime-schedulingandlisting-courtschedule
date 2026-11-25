@@ -20,7 +20,7 @@ entra_client_id = "62c634e3-f807-44a1-9c95-8ec7460cf514"
 
 apis = {
   courtschedule = {
-    openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
+    openapi_spec_path = "../../src/main/resources/openapi/openapi-spec.yml"
     display_name      = "Crime Scheduling and Listing Schedule API (slc)"
     path              = "amp/slc"
     service_host      = "ccp-marketplace.dev.nl.cjscp"
@@ -37,4 +37,18 @@ apis = {
 # Lets clients get a token with their own credentials in the sandbox portal (see entra-token.tf).
 entra_token_helper = {
   app_insights_logger_name = "sps-api-mgmt-sbox-logger"
+}
+
+# CP token exchange (API Marketplace token translation POC). APIM swaps the external token for a
+# CP token for the consumer's CP-access app. Values match AUTH_CP_TENANT_ID / AUTH_CP_AUDIENCE in
+# SLC's dev config (cp-vp-aks-deploy). Needs the identity from shared-platform-services-infra.
+cp_token_exchange = {
+  tenant_id               = "e2995d11-9947-4e78-9de6-d44e0603518e" # CP nonlive (mdv)
+  audience                = "b69a4519-354b-481b-88a5-65ab7c83273e" # spn_amp_api_slc_publisher (mdv)
+  identity_name           = "sps-api-mgmt-token-exchange-sbox"
+  identity_resource_group = "rg-sps-platform-sbox"
+  # "<external consumer client ID>" = "<CP-access app client ID>". Added per consumer (C4).
+  client_map = {}
+  # Unmapped consumers are forwarded unchanged until the POC tests 403 (test 3).
+  reject_unmapped = false
 }

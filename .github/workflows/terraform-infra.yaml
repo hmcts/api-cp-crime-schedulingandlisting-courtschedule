@@ -5,20 +5,20 @@ on:
     branches:
       - main
     paths:
-      - "infrastructure/**/*.tf"
-      - "infrastructure/**/*.tfvars"
-      - "infrastructure/**/*.xml"
-      - "infrastructure/**/*.yml"
+      - "amp/infrastructure/**/*.tf"
+      - "amp/infrastructure/**/*.tfvars"
+      - "amp/infrastructure/**/*.xml"
+      - "amp/infrastructure/**/*.yml"
       - "src/main/resources/openapi/**"
       - ".github/workflows/terraform-infra.yaml"
   pull_request:
     branches:
       - main
     paths:
-      - "infrastructure/**/*.tf"
-      - "infrastructure/**/*.tfvars"
-      - "infrastructure/**/*.xml"
-      - "infrastructure/**/*.yml"
+      - "amp/infrastructure/**/*.tf"
+      - "amp/infrastructure/**/*.tfvars"
+      - "amp/infrastructure/**/*.xml"
+      - "amp/infrastructure/**/*.yml"
       - "src/main/resources/openapi/**"
       - ".github/workflows/terraform-infra.yaml"
   workflow_dispatch:
@@ -52,7 +52,7 @@ jobs:
       - name: Terraform format check
         uses: hmcts/cnp-githubactions-library/terraform-fmt@main
         with:
-          working-directory: infrastructure
+          working-directory: amp/infrastructure
           recursive: true
 
   # Fails the run if the OpenAPI spec breaks consumers of the latest published release.
@@ -123,13 +123,13 @@ jobs:
           sandbox_matrix='[]'
           has_sandbox="false"
 
-          for file in infrastructure/*.tfvars; do
+          for file in amp/infrastructure/*.tfvars; do
             if [ ! -f "$file" ]; then
               continue
             fi
 
             env_name="${file%.tfvars}"
-            env_name="${env_name#infrastructure/}"
+            env_name="${env_name#amp/infrastructure/}"
             env_upper="$(echo "$env_name" | tr '[:lower:]-' '[:upper:]_')"
 
             if [[ " $SKIP_ENVS " == *" $env_name "* ]]; then
@@ -190,7 +190,7 @@ jobs:
       state-store-account-name: spsapimapi${{matrix.environment}}state
       state-store-container-name: terraform-state
       state-store-use-entra-id-auth: true
-      working-directory: infrastructure
+      working-directory: amp/infrastructure
       plan-only: ${{ github.event_name == 'pull_request' || (github.event_name ==
         'workflow_dispatch' && github.event.inputs.overrideAction == 'plan') }}
       product: cp-crime-schedulingandlisting
@@ -221,7 +221,7 @@ jobs:
       state-store-account-name: spsapimapi${{matrix.environment}}state
       state-store-container-name: terraform-state
       state-store-use-entra-id-auth: true
-      working-directory: infrastructure
+      working-directory: amp/infrastructure
       plan-only: ${{ github.event_name == 'pull_request' || (github.event_name ==
         'workflow_dispatch' && github.event.inputs.overrideAction == 'plan') }}
       product: cp-crime-schedulingandlisting
