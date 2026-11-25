@@ -37,29 +37,17 @@
 %{ if cp_token_exchange ~}
         <!-- CP token exchange: swap the validated external token for a CP token for this consumer's CP-access app. -->
         <set-variable name="extAzp" value="@(((Jwt)context.Variables[&quot;extJwt&quot;]).Claims.GetValueOrDefault(&quot;azp&quot;, &quot;&quot;))" />
-        <set-variable name="cpAppId" value="" />
-%{ if length(cp_client_map) > 0 ~}
-        <choose>
-%{ for ext_client_id, cp_app_id in cp_client_map ~}
-            <when condition="@((string)context.Variables[&quot;extAzp&quot;] == &quot;${ext_client_id}&quot;)">
-                <set-variable name="cpAppId" value="${cp_app_id}" />
-            </when>
-%{ endfor ~}
-        </choose>
-%{ endif ~}
-%{ if cp_reject_unmapped ~}
-        <choose>
-            <when condition="@(string.IsNullOrEmpty((string)context.Variables[&quot;cpAppId&quot;]))">
-                <return-response>
-                    <set-status code="403" reason="Forbidden" />
-                    <set-header name="Content-Type" exists-action="override">
-                        <value>application/json</value>
-                    </set-header>
-                    <set-body>{"error":"This client is not enabled for this API."}</set-body>
-                </return-response>
-            </when>
-        </choose>
-%{ endif ~}
+        <!-- Consumer => CP-access app map, kept by the marketplace backend in the APIM named value amp-client-map
+             as "<external client id>=<CP-access app client id>;..." (GUIDs only). Unmapped consumers are forwarded unchanged. -->
+        <set-variable name="cpAppId" value="@{
+            var ext = (string)context.Variables[&quot;extAzp&quot;];
+            foreach (var pair in &quot;{{amp-client-map}}&quot;.Split(';'))
+            {
+                var kv = pair.Split('=');
+                if (kv.Length == 2 &amp;&amp; kv[0].Trim() == ext) { return kv[1].Trim(); }
+            }
+            return &quot;&quot;;
+        }" />
         <choose>
             <when condition="@(!string.IsNullOrEmpty((string)context.Variables[&quot;cpAppId&quot;]))">
                 <cache-lookup-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;] + &quot;-${cp_audience}&quot;)" variable-name="cpToken" />

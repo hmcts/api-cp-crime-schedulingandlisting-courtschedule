@@ -50,7 +50,7 @@ testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
 // ApiPolicyTest reads the APIM policy, which Gradle would not otherwise see as an input.
 tasks.named('test') {
-  inputs.file("infrastructure/policies/api-policy.xml")
+  inputs.file("amp/infrastructure/policies/api-policy.xml")
       .withPropertyName('apimPolicy')
       .withPathSensitivity(PathSensitivity.RELATIVE)
 }

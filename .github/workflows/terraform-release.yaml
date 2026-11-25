@@ -26,7 +26,7 @@ jobs:
       - name: Terraform format check
         uses: hmcts/cnp-githubactions-library/terraform-fmt@main
         with:
-          working-directory: infrastructure
+          working-directory: amp/infrastructure
           recursive: true
 
   terraform-prod:
@@ -44,7 +44,7 @@ jobs:
       state-store-account-name: spsapimapiprodstate
       state-store-container-name: terraform-state
       state-store-use-entra-id-auth: true
-      working-directory: infrastructure
+      working-directory: amp/infrastructure
       plan-only: false
       product: cp-crime-schedulingandlisting
       post-plan-to-pr: false

@@ -51,7 +51,7 @@ Authentication uses OpenID Connect — no passwords or secrets are stored.
 az login
 az account set --subscription bd2864ed-4f3e-45ed-9c6a-8d179674bab1
 
-cd infrastructure
+cd amp/infrastructure
 terraform init
 terraform plan -var-file=sbox.tfvars
 terraform apply -var-file=sbox.tfvars

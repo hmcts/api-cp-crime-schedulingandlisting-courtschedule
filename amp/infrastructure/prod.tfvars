@@ -1,5 +1,5 @@
-api_mgmt_rg   = "rg-sps-platform-demo"
-api_mgmt_name = "sps-api-mgmt-demo"
+api_mgmt_rg   = "rg-sps-platform-prod"
+api_mgmt_name = "sps-api-mgmt-prod"
 
 apim_product = {
   name                          = "cp-crime-schedulingandlisting"
@@ -10,21 +10,20 @@ apim_product = {
   product_access_control_groups = ["developers", "administrators", "guests"]
 }
 
-# Demo is external-entra-id's stg tenant, the one aat also uses, so the tenant and the
-# own apply output rather than copied across from aat.tfvars.
-entra_tenant_id = "db827888-77df-4707-b3d9-24a3dfe32889"
-entra_client_id = "d6b20cca-b3dd-4232-9568-6d1313726bfa"
+entra_tenant_id = "0d0315f6-3c04-4edb-ac37-b05f580cc122"
+entra_client_id = "19cdaed5-deb7-4e62-ac00-596fccee972d"
 
-# service_host is sit, the non-live network - a demo audience sees no live CP
-# data. aat's prp backend is on the live network, which is why demo does not follow it here.
 apis = {
   courtschedule = {
     openapi_spec_path = "../src/main/resources/openapi/openapi-spec.yml"
     display_name      = "Crime Scheduling and Listing Schedule API (slc)"
     path              = "amp/slc"
-    service_host      = "sitamp01-appgw.sit.nl.cjscp"
+    service_host      = "prdamp01-appgw.prd.lv.cjscp"
     service_path      = "/slc"
     revision          = "1"
     required_roles    = ["app.read"]
   }
 }
+
+# CP token exchange is off here until the APIM identity and CP-access apps exist for this environment.
+cp_token_exchange = null
