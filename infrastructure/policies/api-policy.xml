@@ -115,9 +115,6 @@
         <set-header name="X-Client-Id" exists-action="override">
             <value>@((string)context.Variables["extAzp"])</value>
         </set-header>
-        <set-header name="X-Correlation-Id" exists-action="skip">
-            <value>@(context.RequestId.ToString())</value>
-        </set-header>
 %{ endif ~}
         <quota-by-key calls="500" renewal-period="86400" counter-key="@((context.Subscription?.Key ?? context.Request.IpAddress) + &quot;:slc&quot;)" />
     </inbound>
