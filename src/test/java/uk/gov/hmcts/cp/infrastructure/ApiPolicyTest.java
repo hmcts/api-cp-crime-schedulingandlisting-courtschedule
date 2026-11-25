@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ApiPolicyTest {
 
-    private static final Path POLICY = Path.of("infrastructure/policies/api-policy.xml");
+    private static final Path POLICY = Path.of("amp/infrastructure/policies/api-policy.xml");
 
     private static Document policy;
 
