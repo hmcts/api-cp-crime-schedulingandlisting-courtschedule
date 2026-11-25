@@ -48,7 +48,9 @@ cp_token_exchange = {
   identity_name           = "sps-api-mgmt-token-exchange-sbox"
   identity_resource_group = "rg-sps-platform-sbox"
   # "<external consumer client ID>" = "<CP-access app client ID>". Added per consumer (C4).
-  client_map = {}
+  client_map = {
+    "378a2954-c99b-4f8d-a35b-e0e70ecd3ea5" = "6e2b811a-29f0-40a3-9af8-2ad42c62d0cd" # amp-test-external-client => amp-cpaccess-consumer-poc-sbox
+  }
   # Unmapped consumers are forwarded unchanged until the POC tests 403 (test 3).
   reject_unmapped = false
 }
