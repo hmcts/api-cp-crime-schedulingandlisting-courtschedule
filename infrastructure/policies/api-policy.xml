@@ -62,7 +62,7 @@
 %{ endif ~}
         <choose>
             <when condition="@(!string.IsNullOrEmpty((string)context.Variables[&quot;cpAppId&quot;]))">
-                <cache-lookup-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;])" variable-name="cpToken" />
+                <cache-lookup-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;] + &quot;-${cp_audience}&quot;)" variable-name="cpToken" />
                 <choose>
                     <when condition="@(!context.Variables.ContainsKey(&quot;cpToken&quot;))">
                         <!-- APIM's user-assigned identity token is the client assertion: no secret is stored. -->
@@ -103,7 +103,7 @@
                         </choose>
                         <set-variable name="cpTokenBody" value="@(((IResponse)context.Variables[&quot;cpTokenResponse&quot;]).Body.As&lt;JObject&gt;())" />
                         <set-variable name="cpToken" value="@((string)((JObject)context.Variables[&quot;cpTokenBody&quot;])[&quot;access_token&quot;])" />
-                        <cache-store-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;])" value="@((string)context.Variables[&quot;cpToken&quot;])" duration="@(Math.Max(60, (int)((JObject)context.Variables[&quot;cpTokenBody&quot;])[&quot;expires_in&quot;] - ${cp_cache_buffer_seconds}))" />
+                        <cache-store-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;] + &quot;-${cp_audience}&quot;)" value="@((string)context.Variables[&quot;cpToken&quot;])" duration="@(Math.Max(60, (int)((JObject)context.Variables[&quot;cpTokenBody&quot;])[&quot;expires_in&quot;] - ${cp_cache_buffer_seconds}))" />
                     </when>
                 </choose>
                 <set-header name="Authorization" exists-action="override">
