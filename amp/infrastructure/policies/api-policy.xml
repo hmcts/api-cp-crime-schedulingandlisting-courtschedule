@@ -34,32 +34,33 @@
                 </return-response>
             </otherwise>
         </choose>
-%{ if cp_audience != "" ~}
-        <!-- CP token exchange (shared fragment from shared-platform-services-infra): swap the validated external token for a CP token. -->
-        <set-variable name="cpAudience" value="${cp_audience}" />
-%{ if length(cp_client_map) > 0 ~}
-        <!-- This API's consumers: external client ID (azp) => that consumer's CP-access app. -->
+%{ if token_exchange ~}
+        <!-- Token exchange (shared fragment from shared-platform-services-infra): swap the validated external token for a backend token. -->
+        <set-variable name="tokenExchangeTenantId" value="${token_exchange_tenant_id}" />
+        <set-variable name="tokenExchangeAudience" value="${token_exchange_audience}" />
+%{ if length(token_exchange_client_map) > 0 ~}
+        <!-- This API's consumers: external client ID (azp) => that consumer's backend-access app. -->
         <choose>
-%{ for ext_client_id, cp_app_id in cp_client_map ~}
+%{ for ext_client_id, app_id in token_exchange_client_map ~}
             <when condition="@(((Jwt)context.Variables[&quot;extJwt&quot;]).Claims.GetValueOrDefault(&quot;azp&quot;, &quot;&quot;) == &quot;${ext_client_id}&quot;)">
-                <set-variable name="cpAppId" value="${cp_app_id}" />
+                <set-variable name="tokenExchangeAppId" value="${app_id}" />
             </when>
 %{ endfor ~}
         </choose>
 %{ endif ~}
-%{ if cp_reject_unmapped ~}
-        <set-variable name="cpRejectUnmapped" value="@(true)" />
+%{ if token_exchange_reject_unmapped ~}
+        <set-variable name="tokenExchangeRejectUnmapped" value="@(true)" />
 %{ endif ~}
         <!-- The cache policies stay here: cache-lookup-value is not supported inside a policy fragment. -->
         <choose>
-            <when condition="@(!string.IsNullOrEmpty(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;cpAppId&quot;, &quot;&quot;)))">
-                <cache-lookup-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;] + &quot;-${cp_audience}&quot;)" variable-name="cpToken" />
+            <when condition="@(!string.IsNullOrEmpty(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;tokenExchangeAppId&quot;, &quot;&quot;)))">
+                <cache-lookup-value key="@(&quot;token-exchange-${token_exchange_tenant_id}-&quot; + (string)context.Variables[&quot;tokenExchangeAppId&quot;] + &quot;-${token_exchange_audience}&quot;)" variable-name="tokenExchangeToken" />
             </when>
         </choose>
-        <include-fragment fragment-id="cp-token-exchange" />
+        <include-fragment fragment-id="token-exchange" />
         <choose>
-            <when condition="@(context.Variables.ContainsKey(&quot;cpTokenCacheSeconds&quot;))">
-                <cache-store-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;] + &quot;-${cp_audience}&quot;)" value="@((string)context.Variables[&quot;cpToken&quot;])" duration="@((int)context.Variables[&quot;cpTokenCacheSeconds&quot;])" />
+            <when condition="@(context.Variables.ContainsKey(&quot;tokenExchangeCacheSeconds&quot;))">
+                <cache-store-value key="@(&quot;token-exchange-${token_exchange_tenant_id}-&quot; + (string)context.Variables[&quot;tokenExchangeAppId&quot;] + &quot;-${token_exchange_audience}&quot;)" value="@((string)context.Variables[&quot;tokenExchangeToken&quot;])" duration="@((int)context.Variables[&quot;tokenExchangeCacheSeconds&quot;])" />
             </when>
         </choose>
 %{ endif ~}

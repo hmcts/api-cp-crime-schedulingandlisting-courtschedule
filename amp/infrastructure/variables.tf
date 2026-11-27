@@ -139,16 +139,18 @@ variable "entra_token_helper" {
   default = null
 }
 
-variable "cp_token_exchange" {
+variable "token_exchange" {
   description = <<-EOT
-    When set, the API policy includes APIM's shared cp-token-exchange fragment (shared-platform-services-infra),
-    which swaps the validated external token for a CP token before calling the backend. The CP tenant, APIM's
-    identity live in that fragment; this API's audience and its consumers are set here.
+    When set, the API policy includes APIM's shared token-exchange fragment (shared-platform-services-infra),
+    which swaps the validated external token for a token from the backend's tenant before calling the backend.
+    APIM's identity lives in that fragment; this API's tenant, audience and consumers are set here.
   EOT
   type = object({
-    # Client ID of the CP API's publisher app; the token is requested for "<audience>/.default".
+    # Tenant that issues the backend token.
+    tenant_id = string
+    # Client ID of the backend API's app; the token is requested for "<audience>/.default".
     audience = string
-    # This API's consumers: external client ID (the token's azp) => that consumer's CP-access app client ID.
+    # This API's consumers: external client ID (the token's azp) => that consumer's backend-access app client ID.
     client_map = optional(map(string), {})
     # true: a consumer missing from client_map gets 403. false: its request is forwarded unchanged,
     # with the external token.
@@ -157,10 +159,10 @@ variable "cp_token_exchange" {
   default = null
 
   validation {
-    condition = var.cp_token_exchange == null || alltrue(concat(
-      [can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", try(var.cp_token_exchange.audience, "")))],
-      [for k, v in try(var.cp_token_exchange.client_map, {}) : can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", k)) && can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", v))]
+    condition = var.token_exchange == null || alltrue(concat(
+      [for id in [try(var.token_exchange.tenant_id, ""), try(var.token_exchange.audience, "")] : can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", id))],
+      [for k, v in try(var.token_exchange.client_map, {}) : can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", k)) && can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", v))]
     ))
-    error_message = "cp_token_exchange audience and every client_map key and value must be lower-case GUIDs."
+    error_message = "token_exchange tenant_id, audience and every client_map key and value must be lower-case GUIDs."
   }
 }

@@ -29,5 +29,5 @@ apis = {
   }
 }
 
-# CP token exchange is off here until the APIM identity and CP-access apps exist for this environment.
-cp_token_exchange = null
+# Token exchange is off here until the APIM identity and CP-access apps exist for this environment.
+token_exchange = null

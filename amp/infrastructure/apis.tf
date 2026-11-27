@@ -99,10 +99,12 @@ resource "azurerm_api_management_api_policy" "api_policy" {
     client_id      = var.entra_client_id
     required_roles = each.value.required_roles
 
-    # CP token exchange through the shared cp-token-exchange fragment (see variables.tf). Off when null.
-    cp_audience        = try(var.cp_token_exchange.audience, "")
-    cp_client_map      = try(var.cp_token_exchange.client_map, {})
-    cp_reject_unmapped = try(var.cp_token_exchange.reject_unmapped, false)
+    # Token exchange through the shared token-exchange fragment (see variables.tf). Off when null.
+    token_exchange                 = var.token_exchange != null
+    token_exchange_tenant_id       = try(var.token_exchange.tenant_id, "")
+    token_exchange_audience        = try(var.token_exchange.audience, "")
+    token_exchange_client_map      = try(var.token_exchange.client_map, {})
+    token_exchange_reject_unmapped = try(var.token_exchange.reject_unmapped, false)
   })
 
   depends_on = [module.apis]

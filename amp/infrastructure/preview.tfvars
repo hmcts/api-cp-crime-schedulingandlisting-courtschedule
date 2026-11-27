@@ -28,4 +28,4 @@ apis = {
 }
 
 # Connectivity test only: no CP token exchange.
-cp_token_exchange = null
+token_exchange = null
