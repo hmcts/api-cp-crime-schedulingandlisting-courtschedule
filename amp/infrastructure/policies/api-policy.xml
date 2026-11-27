@@ -50,7 +50,18 @@
 %{ if cp_reject_unmapped ~}
         <set-variable name="cpRejectUnmapped" value="@(true)" />
 %{ endif ~}
+        <!-- The cache policies stay here: cache-lookup-value is not supported inside a policy fragment. -->
+        <choose>
+            <when condition="@(!string.IsNullOrEmpty(context.Variables.GetValueOrDefault&lt;string&gt;(&quot;cpAppId&quot;, &quot;&quot;)))">
+                <cache-lookup-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;] + &quot;-${cp_audience}&quot;)" variable-name="cpToken" />
+            </when>
+        </choose>
         <include-fragment fragment-id="cp-token-exchange" />
+        <choose>
+            <when condition="@(context.Variables.ContainsKey(&quot;cpTokenCacheSeconds&quot;))">
+                <cache-store-value key="@(&quot;cp-token-&quot; + (string)context.Variables[&quot;cpAppId&quot;] + &quot;-${cp_audience}&quot;)" value="@((string)context.Variables[&quot;cpToken&quot;])" duration="@((int)context.Variables[&quot;cpTokenCacheSeconds&quot;])" />
+            </when>
+        </choose>
 %{ endif ~}
         <quota-by-key calls="500" renewal-period="86400" counter-key="@((context.Subscription?.Key ?? context.Request.IpAddress) + &quot;:slc&quot;)" />
     </inbound>
